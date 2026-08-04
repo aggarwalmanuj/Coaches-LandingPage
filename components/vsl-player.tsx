@@ -15,23 +15,20 @@ import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 
 /**
- * Path to the approved Coaches and Consultants VSL, or null while none exists.
+ * The approved Coaches and Consultants VSL (4m08s), and its poster.
  *
- * This is null on purpose. The file that used to sit here was the B2B
- * Healthcare Operations cut, byte-identical to the one in the B2B-Funnel repo:
- * its poster reads "Your healthcare organization may", it shows doctors in lab
- * coats, and it names the B2B mechanism ("Operating Belief" / "Business Belief
- * Map") rather than this page's Pattern-to-Belief Map. Renaming it to
- * vsl-coaches-* made B2B content look coach-specific in the source while the
- * pixels stayed healthcare, so it has been parked under
- * public/video/placeholder/ with an explicit name instead.
+ * Source master was 1920x1080 / 76MB; shipped here re-encoded to 1280x720
+ * H.264 CRF23 with `+faststart` (21MB), which keeps the burned-in captions
+ * pixel-sharp while letting playback begin before the file has fully
+ * downloaded. The poster is a frame from 1.5s, chosen because the presenter is
+ * open-handed and the caption reads a complete phrase ("create value.") rather
+ * than freezing mid-sentence.
  *
- * TODO(launch): set this to the approved cut (and add VSL_POSTER) once it
- * exists. Until then the hero renders the placeholder card below, which is
- * honest about what is missing rather than playing the wrong vertical's video.
+ * If these are ever set back to null, the hero falls back to the placeholder
+ * card further down rather than rendering a broken <video>.
  */
-const VSL_SRC: string | null = null;
-const VSL_POSTER: string | null = null;
+const VSL_SRC: string | null = "/video/vsl-coaches-v1.mp4";
+const VSL_POSTER: string | null = "/video/vsl-coaches-poster.jpg";
 
 const QUARTILES = [
   { at: 0.25, event: "vsl_25" },

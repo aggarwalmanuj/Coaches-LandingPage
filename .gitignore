@@ -40,8 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Quarantined B2B healthcare VSL: 74MB, referenced by nothing, and it is the
-# WRONG vertical's video (its poster reads "Your healthcare organization").
-# It is kept locally only so the swap-in is easy; it must not enter git history,
-# where it could never be removed without a rewrite. See the README.
-/public/video/placeholder/
+# Source video masters. The shipped cut in public/video/ is already compressed;
+# keep multi-hundred-MB masters out of git history, where they can never be
+# removed without a rewrite.
+/public/video/masters/

@@ -297,30 +297,27 @@ export function PageStructuredData({
 // Homepage-only nodes: content that exists ONLY on "/".
 // ---------------------------------------------------------------------------
 
-/**
- * The hero VSL node.
- *
- * DELIBERATELY NOT EXPORTED FOR USE YET. There is no approved Coaches and
- * Consultants cut, so the hero currently renders a placeholder card instead of
- * a <video> (see components/vsl-player.tsx). Emitting a VideoObject while no
- * video exists on the page is precisely the markup-without-visible-content case
- * Google treats as spam, and it is the same rule this file enforces everywhere
- * else by scoping nodes per route.
- *
- * TODO(launch): once the approved cut ships, fill in contentUrl/thumbnail with
- * the real filenames, set uploadDate to the real publish date, add `duration`
- * from the measured cut, and re-add `videoNode` to the homepage's extraNodes in
- * app/page.tsx.
- */
+/** The hero VSL. `duration` is the measured length of the shipped cut
+ *  (247.8s -> PT4M8S); it is stated only because it was actually measured, not
+ *  estimated. Rendered on the homepage only, which is the one route that
+ *  carries the video. */
 export const videoNode = {
   "@type": "VideoObject",
   "@id": `${SITE}/#vsl`,
   name: "AI Merge Coaches and Consultants Belief Score introduction",
   description:
     "What the free Coaches and Consultants Belief Score examines: the belief that may be shaping one repeated commercial moment, built from the participant's own account of what keeps happening.",
-  // TODO(launch): real file, real date, real duration.
-  contentUrl: `${SITE}/video/TODO-approved-coaches-vsl.mp4`,
-  uploadDate: "2026-08-03",
+  contentUrl: `${SITE}/video/vsl-coaches-v1.mp4`,
+  thumbnail: {
+    "@type": "ImageObject",
+    url: `${SITE}/video/vsl-coaches-poster.jpg`,
+    width: 1280,
+    height: 720,
+  },
+  thumbnailUrl: `${SITE}/video/vsl-coaches-poster.jpg`,
+  duration: "PT4M8S",
+  // TODO(launch): set to the real publish date if the cut is dated differently.
+  uploadDate: "2026-08-04",
   publisher: { "@id": ID.org },
   inLanguage: "en",
   isFamilyFriendly: true,

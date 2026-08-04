@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-// NOTE: `react-dom` is imported again for ReactDOM.preload when the approved
-// VSL poster lands - see the TODO(launch) in Home() below.
+import ReactDOM from "react-dom";
 import { FaqItem } from "@/components/faq-item";
 import { LandingAnalytics } from "@/components/landing-analytics";
 import { MobileStickyCta } from "@/components/mobile-sticky-cta";
@@ -10,13 +9,11 @@ import { ScorecardCta } from "@/components/scorecard-cta";
 import { SectionViewTracker } from "@/components/section-view-tracker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-// `videoNode` is deliberately not imported: there is no approved Coaches and
-// Consultants VSL yet, so the hero renders a placeholder and the page must not
-// claim a VideoObject. Re-import it alongside the approved cut.
 import {
   PageStructuredData,
   howToNode,
   publicationNode,
+  videoNode,
 } from "@/components/structured-data";
 import { TestimonialReel } from "@/components/testimonial-reel";
 import { VslPlayer } from "@/components/vsl-player";
@@ -549,18 +546,19 @@ function CtaBlock({
 }
 
 export default function Home() {
-  // LCP preload for the hero VSL poster is disabled while no approved Coaches
-  // and Consultants cut exists: the hero renders a text placeholder, so there
-  // is no poster image to fetch. The old preload pointed at a file that has
-  // since been quarantined (it was the B2B healthcare poster), which meant
-  // every page load fired a request that 404'd.
+  // LCP preload. The hero video's poster frame is the largest element in the
+  // initial viewport on desktop, but a `poster` attribute is only discovered
+  // once the <video> is parsed, and browsers fetch posters at low priority, so
+  // it loses the race to assets that matter less.
   //
-  // TODO(launch): restore alongside the approved cut, preloading its poster:
-  //   ReactDOM.preload(VSL_POSTER, { as: "image", fetchPriority: "high" });
-  // Use ReactDOM.preload rather than a literal <link rel="preload">: React
-  // hoists a rendered <link> into <head> but ALSO emits its own hint for it,
-  // shipping the same preload twice. It is NOT `priority` on a next/image,
-  // because a <video> poster never passes through the next/image pipeline.
+  // ReactDOM.preload rather than a literal <link rel="preload">: React hoists a
+  // rendered <link> into <head> but ALSO emits its own hint for it, shipping
+  // the same preload twice. This emits exactly one. It is NOT `priority` on a
+  // next/image, because a <video> poster never passes through that pipeline.
+  ReactDOM.preload("/video/vsl-coaches-poster.jpg", {
+    as: "image",
+    fetchPriority: "high",
+  });
 
   return (
     <>
@@ -580,12 +578,7 @@ export default function Home() {
         updated={ROUTES.home.updated}
         faqs={toFaqEntries(ESSENTIAL_FAQS)}
         speakableSelectors={["#hero-headline", "#what-you-receive"]}
-        // `videoNode` is intentionally absent: no approved Coaches and
-        // Consultants cut exists yet, so the hero renders a placeholder card
-        // rather than a <video>, and a VideoObject would assert media the page
-        // does not contain. Re-add it with the approved cut. See
-        // components/structured-data.tsx.
-        extraNodes={[howToNode, publicationNode]}
+        extraNodes={[videoNode, howToNode, publicationNode]}
       />
       <LandingAnalytics />
       <main id="main" className="relative flex-1">
