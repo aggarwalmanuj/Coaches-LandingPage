@@ -593,10 +593,22 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal delay={80}>
+              {/* The audience is named IN the headline, not in a line under it:
+                  Block 01's "DO NOT ADD" list forbids a supporting paragraph
+                  between the headline, the VSL and the CTA, so a separate
+                  "for coaches and consultants" line would breach the spec.
+                  Working it into the H1 satisfies the owners' note (the page
+                  must address coaches and consultants) while keeping the
+                  above-the-fold order intact.
+
+                  The phrasing is the ICP matrix's own governing position:
+                  "A coach or consultant who knows how to create value for other
+                  people but does not consistently make that value visible,
+                  sellable, scalable, or receivable." */}
               <h1 id="hero-headline" className="text-display mt-8">
-                You know how to create value.{" "}
+                You coach and consult at a level your results can prove.{" "}
                 <span className="text-emphasis">
-                  But what belief is shaping whether that value becomes visible,
+                  So what belief decides whether that value becomes visible,
                   sellable, and scalable?
                 </span>
               </h1>
@@ -650,8 +662,8 @@ export default function Home() {
                 </Reveal>
                 <Reveal delay={60}>
                   <h2 className="text-headline mt-5">
-                    A Personalized Reflection Built from the Business Pattern
-                    You Describe
+                    A Personalized Reflection Built from the Coaching or
+                    Consulting Pattern You Describe
                   </h2>
                 </Reveal>
                 <Reveal delay={100}>
@@ -839,7 +851,10 @@ export default function Home() {
                 </p>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="text-headline mt-5">The Work Is Valuable</h2>
+                <h2 className="text-headline mt-5">
+                  Your Client Work Is Valuable. The Commercial Moment Is Where
+                  It Stalls.
+                </h2>
               </Reveal>
               <Reveal delay={100}>
                 <p className="text-body-lg mt-6 text-muted">
@@ -1030,7 +1045,8 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Patterns That Look Separate Can Now Be Examined Together
+                  Your Delivery, Pricing and Follow-Up Patterns Are Not
+                  Separate Problems
                 </h2>
               </Reveal>
               <div className="text-body-lg mt-7 space-y-4 text-muted">
@@ -1122,7 +1138,8 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Your Belief Score Creates a Pattern-to-Belief Map
+                  Your Coaches and Consultants Belief Score Creates a
+                  Pattern-to-Belief Map
                 </h2>
               </Reveal>
               <Reveal delay={120}>
@@ -1352,7 +1369,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  The Goal Is Not to Become More Aggressive
+                  The Goal Is Not a Harder Sell or a Shallower Practice
                 </h2>
               </Reveal>
               <Reveal delay={100}>
@@ -1452,11 +1469,22 @@ export default function Home() {
             </Reveal>
 
             <div className="min-w-0">
+              {/* Retitled and refocused. The spec's own heading was "Why I
+                  Created AI Merge", which makes the section about the founder
+                  rather than about the reader; the owners flagged it. The
+                  section stays (Block 09 exists to connect Manuj's lived
+                  experience to the product) but now leads with the coach and
+                  consultant relevance, and the backstory is compressed so the
+                  factory/Canada detail serves the selling-vs-building pattern
+                  instead of standing as a general biography. */}
               <Reveal>
-                <ChapterMark>The person behind it</ChapterMark>
+                <ChapterMark>Why this exists</ChapterMark>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="text-headline mt-5">Why I Created AI Merge</h2>
+                <h2 className="text-headline mt-5">
+                  I Built This Because I Kept Making the Same Move Coaches and
+                  Consultants Make
+                </h2>
               </Reveal>
               <Reveal delay={100}>
                 <blockquote className="text-emphasis mt-7 text-xl leading-relaxed">
@@ -1468,40 +1496,31 @@ export default function Home() {
               <div className="text-body-lg mt-7 space-y-4 text-muted">
                 <Reveal>
                   <p>
-                    I began working in a factory in India when I was fifteen. I
-                    later rebuilt my life in Canada and built a career across
-                    technology, entrepreneurship, artificial intelligence,
-                    consulting, and innovation. I learned how to solve difficult
-                    problems without being handed a map.
+                    I have spent my career consulting and advising, and I know
+                    the moment where a recommendation is ready and something
+                    else happens instead. Whenever pressure rose, my response
+                    was the one I was best at: build more, learn more, carry
+                    more, improve more, create more value.
                   </p>
                 </Reveal>
                 <Reveal delay={40}>
                   <p>
-                    That self-made identity created real capability. It also
-                    reinforced a familiar response. When pressure increased:
-                    build more, learn more, carry more, improve more, create
-                    more value.
+                    It produced real results. It did not reveal what happens
+                    when the next level asks for something different: selling
+                    instead of refining, receiving instead of overproving,
+                    delegating instead of carrying, simplifying without
+                    abandoning depth, letting a client or a market actually
+                    answer.
                   </p>
                 </Reveal>
                 <Reveal delay={80}>
                   <p>
-                    That response produced real results. It did not always
-                    reveal what happened when the next level required something
-                    different: selling instead of refining, receiving instead of
-                    overproving, delegating instead of carrying, simplifying
-                    without abandoning depth, allowing a client or market to
-                    make a decision.
-                  </p>
-                </Reveal>
-                <Reveal delay={120}>
-                  <p>
-                    Understanding the visible behavior did not automatically
-                    reveal what the repeated moment had taught me to believe.
-                    That gap became part of the reason I created{" "}
+                    Seeing the behavior did not tell me what the repeated moment
+                    had taught me to believe. That gap is why I created{" "}
                     <span className="font-medium text-fg">AI Merge</span>. The
-                    goal is not to ask technology to tell people who they are.
-                    It is to help make one important pattern visible, then
-                    return authority to the person examining it.
+                    goal is not to have technology tell you who you are. It is
+                    to make one pattern visible, then hand authority back to the
+                    person examining it.
                   </p>
                 </Reveal>
               </div>
@@ -1580,7 +1599,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  What Participants Have Noticed Through AI Merge
+                  What People Have Noticed Working Through AI Merge
                 </h2>
               </Reveal>
             </div>
@@ -1927,7 +1946,8 @@ export default function Home() {
           <div className="mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
             <Reveal>
               <h2 className="text-display">
-                You already know what the business pattern keeps doing.{" "}
+                You already know which moment in your practice keeps
+                repeating.{" "}
                 <span className="text-emphasis">
                   Now see what it may have taught you to believe.
                 </span>
