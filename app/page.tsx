@@ -611,11 +611,10 @@ export default function Home() {
                   scalable" was true of any business, so it becomes the language
                   of the work itself (transformation, clients, expertise). */}
               <h1 id="hero-headline" className="text-display mt-8">
-                As a coach or consultant, you already know how to create
-                transformation.{" "}
+                Coaches and consultants: you know how to create value.{" "}
                 <span className="text-emphasis">
-                  But what belief is shaping whether that transformation becomes
-                  visible, trusted, and scalable?
+                  But what belief decides whether that value gets sold,
+                  received, and scaled?
                 </span>
               </h1>
             </Reveal>
@@ -703,11 +702,17 @@ export default function Home() {
                   Coaches and Consultants result interface. */}
               <Reveal delay={140}>
                 <figure className="vsl-frame relative overflow-hidden rounded-2xl bg-card">
-                  <div className="flex items-center justify-between border-b border-line px-6 py-4">
-                    <span className="text-eyebrow text-faint">
+                  {/* Same window chrome as the Block 07 mock, so both product
+                      visuals on this page read as one interface, and as the
+                      same family as the other AI Merge funnel pages. */}
+                  <div className="flex items-center gap-2 border-b border-line px-6 py-4">
+                    <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                    <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                    <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                    <span className="text-eyebrow ml-2 text-faint">
                       Pattern-to-Belief Map
                     </span>
-                    <span className="cred-chip !py-1.5 !text-xs">
+                    <span className="cred-chip ml-auto !py-1.5 !text-xs">
                       Illustrative
                     </span>
                   </div>
@@ -778,7 +783,7 @@ export default function Home() {
             </Reveal>
             <Reveal delay={60}>
               <h2 className="text-headline mt-5">
-                You May Already Be Thinking:
+                Coaches and Consultants Often Arrive Thinking:
               </h2>
             </Reveal>
             <div className="text-body-lg mt-8 space-y-5 text-muted">
@@ -858,8 +863,8 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Your Client Work Is Valuable. The Commercial Moment Is Where
-                  It Stalls.
+                  The Coaching Is Good. The Consulting Works. The Client
+                  Results Are Real.
                 </h2>
               </Reveal>
               <Reveal delay={100}>
@@ -1051,8 +1056,8 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Your Delivery, Pricing and Follow-Up Patterns Are Not
-                  Separate Problems
+                  Separate Business Moments, One Underlying Coaching and
+                  Consulting Pattern
                 </h2>
               </Reveal>
               <div className="text-body-lg mt-7 space-y-4 text-muted">
@@ -1242,11 +1247,20 @@ export default function Home() {
           <Reveal delay={100}>
             <figure className="mx-auto mt-12 max-w-3xl">
               <div className="media-frame overflow-hidden rounded-2xl bg-card">
+                {/* Window chrome: the three dots + mono label is the shared
+                    product-mock cue used across the other AI Merge funnel
+                    pages, so a visitor who has seen one recognises this as the
+                    same product family. Rendered in this page's own tokens
+                    (line/faint, eyebrow tracking) rather than copied wholesale,
+                    which keeps it recognisably the same but not identical. */}
                 <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                  <span className="text-eyebrow text-faint">
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                  <span className="text-eyebrow ml-2 text-faint">
                     Guided reflection
                   </span>
-                  <span className="ml-auto text-xs text-faint">
+                  <span className="ml-auto hidden text-xs text-faint sm:inline">
                     Answer in your own words
                   </span>
                 </div>
@@ -1375,7 +1389,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  The Goal Is Not a Harder Sell or a Shallower Practice
+                  The Goal Is Not to Turn You Into a Salesperson
                 </h2>
               </Reveal>
               <Reveal delay={100}>
@@ -1488,7 +1502,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Why AI Merge Exists for Coaches and Consultants
+                  Why This Work Exists
                 </h2>
               </Reveal>
               <Reveal delay={100}>
@@ -1499,46 +1513,36 @@ export default function Home() {
                   me.&rdquo;
                 </blockquote>
               </Reveal>
+              {/* v2.1 cut the extended founder narrative to a short relevance
+                  statement. Personal history is not this block's persuasive
+                  job: the visitor needs one passage proving the creator has
+                  stood inside the same commercial moment, then credentials,
+                  then out. Per the spec, do NOT reintroduce life history,
+                  origin narrative, career chronology, or a personal
+                  transformation arc here. */}
               <div className="text-body-lg mt-7 space-y-4 text-muted">
-                {/* Four beats: Manuj's experience, the pattern he kept seeing,
-                    why that pattern matters to a coach, then why AI Merge
-                    exists. The sentence rhythm and most of the wording are
-                    carried over; the biography is trimmed so each paragraph
-                    earns its place by being about the reader's practice. */}
                 <Reveal>
                   <p>
-                    I have spent my career consulting and advising, and I know
-                    the moment where a recommendation is ready and something
-                    else happens instead. Whenever pressure rose, my response
-                    was the one I was best at: build more, learn more, carry
-                    more, refine the work again.
+                    Across three decades of consulting, advising, and building
+                    companies, the same gap kept appearing, in my own work and
+                    in the work of the experts around me.
                   </p>
                 </Reveal>
                 <Reveal delay={40}>
                   <p>
-                    Then I kept seeing it in the coaches and consultants I
-                    worked with. The practitioners creating the deepest client
-                    transformation were often the ones finding enrolment
-                    hardest. When growth slowed, they built another framework,
-                    another certification, another offer.
+                    Knowing how to solve the problem is one capability. Letting
+                    the work be priced, simplified, delegated, and directly
+                    offered is a different one.
                   </p>
                 </Reveal>
                 <Reveal delay={80}>
                   <p>
-                    Their expertise was never the ceiling. The belief underneath
-                    was quietly shaping how they priced the work, communicated
-                    its value, invited a decision, received the money, and
-                    allowed the practice to grow without them in every session.
-                  </p>
-                </Reveal>
-                <Reveal delay={120}>
-                  <p>
-                    Seeing the behavior did not tell any of us what the repeated
-                    moment had taught us to believe. That gap is why I created{" "}
-                    <span className="font-medium text-fg">AI Merge</span>. The
-                    goal is not to have technology tell you who you are. It is
-                    to make one pattern visible, then hand authority back to the
-                    person examining it.
+                    Understanding the commercial behavior did not automatically
+                    reveal what the repeated moment had taught me to believe.
+                    That gap is what{" "}
+                    <span className="font-medium text-fg">AI Merge</span> was
+                    built to make visible, then return authority to the person
+                    examining it.
                   </p>
                 </Reveal>
               </div>
@@ -1567,8 +1571,11 @@ export default function Home() {
                     agency.
                   </p>
                   {/* TODO(launch): verify current title, patent wording,
-                      publication wording, approved "peer-reviewed" wording, and
-                      methodology wording. */}
+                      publication wording, approved "peer-reviewed" wording,
+                      methodology wording, and the "three decades" timeframe in
+                      the relevance statement above - v2.1 added that last one
+                      to the verification register explicitly, so it must be
+                      confirmed against the company record before publication. */}
                 </div>
               </Reveal>
             </div>
@@ -1964,8 +1971,8 @@ export default function Home() {
           <div className="mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
             <Reveal>
               <h2 className="text-display">
-                You already know which moment in your practice keeps
-                repeating.{" "}
+                Coaches and consultants: you already know what the pattern
+                keeps doing.{" "}
                 <span className="text-emphasis">
                   Now see what it may have taught you to believe.
                 </span>
