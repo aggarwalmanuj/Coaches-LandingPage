@@ -98,7 +98,7 @@ const NOT_A_REPLACEMENT_FOR = [
 const RECOGNITION_ACTS = [
   {
     label: "The Work Is Valuable",
-    lead: "The conversation went well. The prospect has shown interest. The next step is available.",
+    lead: "The discovery call went well. They can see the transformation. The next step is available.",
     body: "The client results are real. The framework has depth. The proposal is nearly ready. Then something changes.",
   },
   {
@@ -368,7 +368,7 @@ const FIRST_SHIFTS = [
   "You make the recommendation before adding another resource.",
   "You name the price without apologizing for it.",
   "You publish content that includes a clear invitation.",
-  "You let one offer remain stable long enough to receive market evidence.",
+  "You let one offer remain stable long enough to see who actually enrols.",
   "You distinguish client value from unlimited access to you.",
   "You define one repeatable delivery component without removing judgment.",
   "You use AI for one measured workflow instead of endless experimentation.",
@@ -380,7 +380,7 @@ const FIRST_SHIFTS = [
 const CREDENTIALS = [
   "Founder and CIO, TetraNoodle Technologies",
   "Creator of AI Merge",
-  "AI innovator, entrepreneur, and technology leader",
+  "AI innovator and technology leader",
   "Holder of four patents",
   "Published in the Mensa Research Journal",
 ];
@@ -472,7 +472,7 @@ const EXAMPLE_PATTERNS = [
 const HOW_STEPS = [
   {
     title: "Choose One Pattern",
-    body: "Focus on one business situation that matters now, not your entire business. One pattern.",
+    body: "Focus on one situation in your practice that matters now, not your entire business. One pattern.",
   },
   {
     title: "Describe What Happens",
@@ -605,11 +605,16 @@ export default function Home() {
                   "A coach or consultant who knows how to create value for other
                   people but does not consistently make that value visible,
                   sellable, scalable, or receivable." */}
+              {/* Same two-clause structure and cadence as before - a statement
+                  of competence, then the narrower question in italic emphasis.
+                  Only the vocabulary moves: "create value / sellable /
+                  scalable" was true of any business, so it becomes the language
+                  of the work itself (transformation, clients, expertise). */}
               <h1 id="hero-headline" className="text-display mt-8">
-                You coach and consult at a level your results can prove.{" "}
+                You already know how to create transformation.{" "}
                 <span className="text-emphasis">
-                  So what belief decides whether that value becomes visible,
-                  sellable, and scalable?
+                  So what belief is shaping how people buy, value, and refer
+                  your work?
                 </span>
               </h1>
             </Reveal>
@@ -711,7 +716,7 @@ export default function Home() {
                         The Repeated Moment
                       </p>
                       <p className="mt-1.5 text-fg">
-                        When a prospect is ready for a clear recommendation,
+                        When a client is ready for a clear recommendation,
                         more value is added instead of naming the next step.
                       </p>
                     </div>
@@ -858,8 +863,8 @@ export default function Home() {
               </Reveal>
               <Reveal delay={100}>
                 <p className="text-body-lg mt-6 text-muted">
-                  Watch one familiar moment turn back into more value, the same
-                  way it does every time.
+                  Watch one familiar moment turn back into more teaching, the
+                  same way it does every time.
                 </p>
               </Reveal>
             </div>
@@ -1068,7 +1073,7 @@ export default function Home() {
                 </Reveal>
                 {/* The technology boundary, stated as the spec requires. */}
                 <Reveal delay={180}>
-                  <p>Not to tell you what your business needs.</p>
+                  <p>Not to tell you what your practice needs.</p>
                 </Reveal>
                 <Reveal delay={200}>
                   <p>Not to determine the truth about your identity.</p>
@@ -1246,7 +1251,7 @@ export default function Home() {
                 </div>
                 <div className="px-6 py-7 sm:px-8 sm:py-9">
                   <p className="text-title">
-                    Think of one moment that keeps repeating in your business.
+                    Think of one moment that keeps repeating in your practice.
                     What happens, and what do you tend to do next?
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-faint">
@@ -1478,45 +1483,57 @@ export default function Home() {
                   factory/Canada detail serves the selling-vs-building pattern
                   instead of standing as a general biography. */}
               <Reveal>
-                <ChapterMark>Why this exists</ChapterMark>
+                <ChapterMark>Why AI Merge exists</ChapterMark>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  I Built This Because I Kept Making the Same Move Coaches and
-                  Consultants Make
+                  Why AI Merge Exists for Coaches and Consultants
                 </h2>
               </Reveal>
               <Reveal delay={100}>
                 <blockquote className="text-emphasis mt-7 text-xl leading-relaxed">
-                  &ldquo;I knew how to create value. I did not always see the
-                  belief deciding when that value could be sold, received,
-                  simplified, or carried by someone other than me.&rdquo;
+                  &ldquo;I knew how to create transformation. I did not always
+                  see the belief deciding when that work could be priced,
+                  received, simplified, or carried by someone other than
+                  me.&rdquo;
                 </blockquote>
               </Reveal>
               <div className="text-body-lg mt-7 space-y-4 text-muted">
+                {/* Four beats: Manuj's experience, the pattern he kept seeing,
+                    why that pattern matters to a coach, then why AI Merge
+                    exists. The sentence rhythm and most of the wording are
+                    carried over; the biography is trimmed so each paragraph
+                    earns its place by being about the reader's practice. */}
                 <Reveal>
                   <p>
                     I have spent my career consulting and advising, and I know
                     the moment where a recommendation is ready and something
                     else happens instead. Whenever pressure rose, my response
                     was the one I was best at: build more, learn more, carry
-                    more, improve more, create more value.
+                    more, refine the work again.
                   </p>
                 </Reveal>
                 <Reveal delay={40}>
                   <p>
-                    It produced real results. It did not reveal what happens
-                    when the next level asks for something different: selling
-                    instead of refining, receiving instead of overproving,
-                    delegating instead of carrying, simplifying without
-                    abandoning depth, letting a client or a market actually
-                    answer.
+                    Then I kept seeing it in the coaches and consultants I
+                    worked with. The practitioners creating the deepest client
+                    transformation were often the ones finding enrolment
+                    hardest. When growth slowed, they built another framework,
+                    another certification, another offer.
                   </p>
                 </Reveal>
                 <Reveal delay={80}>
                   <p>
-                    Seeing the behavior did not tell me what the repeated moment
-                    had taught me to believe. That gap is why I created{" "}
+                    Their expertise was never the ceiling. The belief underneath
+                    was quietly shaping how they priced the work, communicated
+                    its value, invited a decision, received the money, and
+                    allowed the practice to grow without them in every session.
+                  </p>
+                </Reveal>
+                <Reveal delay={120}>
+                  <p>
+                    Seeing the behavior did not tell any of us what the repeated
+                    moment had taught us to believe. That gap is why I created{" "}
                     <span className="font-medium text-fg">AI Merge</span>. The
                     goal is not to have technology tell you who you are. It is
                     to make one pattern visible, then hand authority back to the
