@@ -1264,29 +1264,54 @@ export default function Home() {
                     Answer in your own words
                   </span>
                 </div>
-                <div className="px-6 py-7 sm:px-8 sm:py-9">
-                  <p className="text-title">
-                    Think of one moment that keeps repeating in your practice.
-                    What happens, and what do you tend to do next?
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-faint">
-                    Not a one-word label. Tell it the way you would say it out
-                    loud. There is no perfect wording, and messy answers are
-                    fine.
-                  </p>
-                  {/* Static mock of the answer field: a div, not an input, so
-                      nothing here is focusable or submittable. */}
-                  <div
-                    aria-hidden
-                    className="mt-6 rounded-xl border border-(--border-strong) bg-bg px-5 py-4"
-                  >
-                    <p className="text-muted">
-                      &ldquo;The conversation goes well, but when it&rsquo;s
-                      time to actually recommend the offer, I start explaining
-                      more and adding things instead of just naming the next
-                      step.&rdquo;
-                      <span className="ml-0.5 inline-block h-5 w-px translate-y-1 bg-signal" />
+                {/* Two-column body, mirroring the shared reflection graphic:
+                    prompt + answer field on the left, a quiet guidance rail on
+                    the right. The graphic's "QUESTION 1 · 5" counter is NOT
+                    reproduced - the spec forbids publishing a question count
+                    until one is verified - and the stage kicker carries the
+                    orientation instead. */}
+                <div className="grid gap-7 px-6 py-7 sm:px-8 sm:py-9 lg:grid-cols-[1.35fr_1fr] lg:gap-9">
+                  <div className="min-w-0">
+                    <p className="text-eyebrow text-faint">
+                      Stage 1 · The repeated moment
                     </p>
+                    <p className="text-title mt-3">
+                      Think of one moment that keeps repeating in your practice.
+                      What happens, and what do you tend to do next?
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-faint">
+                      Not a one-word label. Tell it the way you would say it out
+                      loud. There is no perfect wording, and messy answers are
+                      fine.
+                    </p>
+                    {/* Static mock of the answer field: a div, not an input, so
+                        nothing here is focusable or submittable. */}
+                    <div
+                      aria-hidden
+                      className="mt-6 rounded-xl border border-(--border-strong) bg-bg px-5 py-4"
+                    >
+                      <p className="text-muted">
+                        &ldquo;The conversation goes well, but when it&rsquo;s
+                        time to actually recommend the offer, I start explaining
+                        more and adding things instead of just naming the next
+                        step.&rdquo;
+                        <span className="ml-0.5 inline-block h-5 w-px translate-y-1 bg-signal" />
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="min-w-0 space-y-4">
+                    <blockquote className="border-l-2 border-signal pl-4 text-sm leading-relaxed text-muted italic">
+                      &ldquo;The constraint is almost never where it appears to
+                      be.&rdquo;
+                    </blockquote>
+                    <div className="rounded-xl border border-line bg-surface-2 px-4 py-3.5">
+                      <p className="text-sm leading-relaxed text-muted">
+                        <span className="font-medium text-fg">Tip:</span> say it
+                        out loud if you can. Spoken answers tend to go further
+                        than typed ones.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1331,31 +1356,60 @@ export default function Home() {
               ))}
             </ol>
 
-            {/* Illustrative result panel, shaped like the live result. */}
+            {/* Illustrative result panel.
+                Treatment borrowed from the shared funnel report graphic: window
+                chrome, a titled header row with a "Sample" pill, then one
+                numbered row per field on hairline dividers. The NUMBERS and
+                PROGRESS BARS from that graphic are deliberately not carried
+                over - they belong to a 0-100 scored index, and this product
+                returns no score. The spec's product-visual rules require the
+                five Map fields and forbid fake diagnostic scoring, so the
+                layout is shared and the content stays true. */}
             <Reveal delay={100}>
-              <div className="relative rounded-2xl border border-line bg-card p-7 sm:p-9">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-title">
-                    Example Coaches and Consultants Belief Score Result
-                  </h3>
-                  <span className="cred-chip shrink-0">
-                    Illustrative example
+              <figure className="vsl-frame relative overflow-hidden rounded-2xl bg-card">
+                <div className="flex items-center gap-2 border-b border-line px-6 py-4">
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                  <span className="text-eyebrow ml-2 truncate text-faint">
+                    AI Merge · Pattern-to-Belief Map
                   </span>
                 </div>
-                <dl className="mt-8 space-y-6 border-t border-line pt-7">
-                  {EXAMPLE_RESULT.map((row) => (
+
+                <div className="flex items-center justify-between gap-3 border-b border-line px-6 py-4">
+                  <div className="min-w-0">
+                    <h3 className="text-title">Your result</h3>
+                    <p className="text-eyebrow mt-1 text-faint">
+                      Built from your own words
+                    </p>
+                  </div>
+                  <span className="cred-chip shrink-0 !py-1.5 !text-xs">
+                    Sample
+                  </span>
+                </div>
+
+                <dl className="list-none">
+                  {EXAMPLE_RESULT.map((row, i) => (
                     <div
                       key={row.label}
-                      className="border-t border-line pt-5 first:border-t-0 first:pt-0"
+                      className="flex gap-4 border-b border-line px-6 py-5 last:border-b-0"
                     >
-                      <dt className="text-eyebrow text-signal">{row.label}</dt>
-                      <dd className="map-stage-body mt-2 leading-relaxed text-muted">
-                        {row.body}
-                      </dd>
+                      <span
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-xs text-faint tabular-nums"
+                        aria-hidden
+                      >
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <dt className="text-eyebrow text-signal">{row.label}</dt>
+                        <dd className="map-stage-body mt-1.5 leading-relaxed text-muted">
+                          {row.body}
+                        </dd>
+                      </div>
                     </div>
                   ))}
                 </dl>
-              </div>
+              </figure>
             </Reveal>
           </div>
 
