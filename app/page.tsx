@@ -611,10 +611,11 @@ export default function Home() {
                   scalable" was true of any business, so it becomes the language
                   of the work itself (transformation, clients, expertise). */}
               <h1 id="hero-headline" className="text-display mt-8">
-                You already know how to create transformation.{" "}
+                As a coach or consultant, you already know how to create
+                transformation.{" "}
                 <span className="text-emphasis">
-                  So what belief is shaping how people buy, value, and refer
-                  your work?
+                  But what belief is shaping whether that transformation becomes
+                  visible, trusted, and scalable?
                 </span>
               </h1>
             </Reveal>
