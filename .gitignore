@@ -44,3 +44,9 @@ next-env.d.ts
 # keep multi-hundred-MB masters out of git history, where they can never be
 # removed without a rewrite.
 /public/video/masters/
+
+# Not referenced by the page yet. question.png is the reflection-interface
+# capture that still shows "QUESTION 1 / 5" on screen; it is kept locally so it
+# can be swapped in the moment an approved capture exists, but it should not
+# enter git history until then.
+/public/graphics/question.png

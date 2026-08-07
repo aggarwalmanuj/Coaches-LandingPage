@@ -594,6 +594,45 @@ select {
   opacity: 1;
 }
 
+/* Section atmosphere. A pair of very soft, heavily blurred orbs behind a
+   section's content, borrowed from the funnel's landing composition so the
+   two properties read as one product. Pure decoration: `pointer-events: none`
+   and z-index below the content, so it can never intercept a click or affect
+   layout. Deliberately weaker than .hero-glow (0.07/0.05 vs 0.22) - this is
+   depth, not a light source, and at hero strength it would compete with the
+   CTA halo for attention. */
+.section-orbs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.section-orbs::before,
+.section-orbs::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(80px);
+}
+.section-orbs::before {
+  width: 30rem;
+  height: 30rem;
+  top: -6rem;
+  right: -8rem;
+  background: rgb(var(--glow) / 0.07);
+}
+.section-orbs::after {
+  width: 26rem;
+  height: 26rem;
+  bottom: -8rem;
+  left: -7rem;
+  background: rgb(var(--glow) / 0.05);
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-orbs { opacity: 0.6; }
+}
+
 /* Floating annotation chips around the hero VSL (reference-layout detail).
    Inverted (near-white on navy) so they pop against both page and video. */
 .vsl-chip {

@@ -1,4 +1,19 @@
 import Image from "next/image";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Award,
+  Building2,
+  FileText,
+  Eye,
+  MessageSquareQuote,
+  RefreshCw,
+  PenLine,
+  Repeat,
+  ScrollText,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import Link from "next/link";
 import ReactDOM from "react-dom";
 import { FaqItem } from "@/components/faq-item";
@@ -68,12 +83,32 @@ const HERO_CRED_CHIPS = [
 /* Blocks 06 / 12 / 13: the five fields a Pattern-to-Belief Map produces. The
    spec repeats this list at each decision point, so it is declared once. */
 const MAP_FIELDS = [
-  "the repeated moment",
-  "a possible belief",
-  "the reinforcing loop",
-  "the moment to watch",
-  "the next evidence",
+  {
+    title: "The repeated moment",
+    body: "The specific situation that keeps recurring, stated concretely rather than as a general complaint.",
+  },
+  {
+    title: "A possible belief",
+    body: "What that repeated experience may have taught you to conclude. An interpretation, not a verdict.",
+  },
+  {
+    title: "The reinforcing loop",
+    body: "How your response produces a consequence that appears to confirm the belief, so it repeats.",
+  },
+  {
+    title: "The moment to watch",
+    body: "The earliest observable point where the pattern begins, narrow enough to actually catch.",
+  },
+  {
+    title: "The next evidence",
+    body: "One small action that would show another response is available. A test you can run this week.",
+  },
 ];
+
+/** One icon per Map field, in the same order. Line icons only: the page's
+ *  visual language is hairlines and restraint, so filled or duotone marks
+ *  would read as a different system. */
+const MAP_FIELD_ICONS = [Repeat, MessageSquareQuote, RefreshCw, Eye, ArrowUpRight];
 
 /* Block 03: what the score explicitly does NOT replace. Naming these keeps the
    page from claiming belief work substitutes for commercial fundamentals. */
@@ -378,12 +413,14 @@ const FIRST_SHIFTS = [
 /* Block 09: compact credential list. TODO(launch): verify exact approved
    wording for title, patents, and publication. */
 const CREDENTIALS = [
-  "Founder and CIO, TetraNoodle Technologies",
-  "Creator of AI Merge",
-  "AI innovator and technology leader",
-  "Holder of four patents",
-  "Published in the Mensa Research Journal",
+  { label: "Role", value: "Founder & CIO, TetraNoodle Technologies" },
+  { label: "Created", value: "The AI Merge methodology" },
+  { label: "Patents", value: "Four, in AI and technology systems" },
+  { label: "Published in", value: "Mensa Research Journal" },
 ];
+
+/** One icon per credential, in order. */
+const CREDENTIAL_ICONS = [Building2, Sparkles, Award, FileText];
 
 /* Block 10: approved participant statements. TODO(launch): verify exact
    wording, consent, role, and display restrictions before publishing. */
@@ -469,6 +506,11 @@ const EXAMPLE_PATTERNS = [
 ];
 
 /* Block 12: the four process steps. */
+/** One icon per step. The NUMBER stays: unlike the Block 08 options, these
+ *  four genuinely run in order, so the sequence is real information. The icon
+ *  carries the character of the step, the number carries its place. */
+const HOW_STEP_ICONS = [Target, PenLine, ScrollText, Sparkles];
+
 const HOW_STEPS = [
   {
     title: "Choose One Pattern",
@@ -499,9 +541,15 @@ const CTA_MICROCOPY =
 const CTA_LABEL = "Get Your Free Coaches and Consultants Belief Score";
 const CTA_LABEL_SHORT = "Get Your Free Belief Score";
 
-function ChapterMark({ children }: { children: React.ReactNode }) {
+function ChapterMark({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <p className="chapter text-eyebrow">
+    <p className={`chapter text-eyebrow ${className}`}>
       <span className="chapter-dot" aria-hidden />
       <span>{children}</span>
     </p>
@@ -657,108 +705,82 @@ export default function Home() {
             Product credibility before the visitor absorbs the full argument:
             the five Map fields on the left, an on-brand result card on the
             right. bg-surface so it alternates against the hero and Block 03. */}
-        <section className="border-y border-line bg-surface">
-          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
+        <section className="relative overflow-hidden border-y border-line bg-surface">
+          <div className="section-orbs" aria-hidden />
+          <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
             <SectionViewTracker event="whatyouget_view" />
-            <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
-              <div>
-                <Reveal>
-                  <ChapterMark>What you receive</ChapterMark>
-                </Reveal>
-                <Reveal delay={60}>
-                  <h2 className="text-headline mt-5">
-                    A Personalized Reflection Built from the Coaching or
-                    Consulting Pattern You Describe
-                  </h2>
-                </Reveal>
-                <Reveal delay={100}>
-                  <p id="what-you-receive" className="text-body-lg mt-6 text-muted">
-                    Your Pattern-to-Belief Map may show: the repeated moment, a
-                    possible belief, the reinforcing loop, the moment to watch,
-                    and the next evidence.
-                  </p>
-                </Reveal>
-                <ul className="mt-6 grid list-none gap-3.5">
-                  {MAP_FIELDS.map((field, i) => (
-                    <Reveal as="li" key={field} delay={120 + i * 40}>
-                      <div className="flex items-start gap-3">
-                        <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                        <p className="text-muted">{field}</p>
-                      </div>
-                    </Reveal>
-                  ))}
-                </ul>
-                <Reveal delay={200}>
-                  <p className="mt-8 text-sm leading-relaxed text-faint">
-                    Built from participant language rather than a generic
-                    business profile · Created by Manuj Aggarwal · Based on the
-                    published AI Merge methodology
-                  </p>
-                </Reveal>
-              </div>
+            {/* Centred header, then the REAL score report full-bleed, then the
+                five fields as icon cards. Previously this block led with a
+                paragraph and a bullet list beside a coded card, which read as
+                text with a decoration; the delivered artifact is the strongest
+                thing this section has, so it leads. */}
+            <div className="mx-auto max-w-3xl text-center">
+              <Reveal>
+                <ChapterMark className="justify-center">
+                  What you receive
+                </ChapterMark>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="text-headline mt-5">
+                  A Personalized Reflection Built from the Coaching or
+                  Consulting Pattern You Describe
+                </h2>
+              </Reveal>
+              <Reveal delay={100}>
+                <p id="what-you-receive" className="text-body-lg mt-6 text-muted">
+                  You receive a scored, written report built from your own
+                  words, not a generic business profile.
+                </p>
+              </Reveal>
+            </div>
 
-              {/* On-brand result card, an honest in-page product mock (labeled
-                  illustrative). TODO(launch): replace with the approved
-                  Coaches and Consultants result interface. */}
-              <Reveal delay={140}>
-                <figure className="vsl-frame relative overflow-hidden rounded-2xl bg-card">
-                  {/* Same window chrome as the Block 07 mock, so both product
-                      visuals on this page read as one interface, and as the
-                      same family as the other AI Merge funnel pages. */}
-                  <div className="flex items-center gap-2 border-b border-line px-6 py-4">
+            {/* The delivered report. This is the score screenshot. */}
+            <Reveal delay={140}>
+              <figure className="mx-auto mt-12 max-w-4xl">
+                <div className="media-frame overflow-hidden rounded-2xl bg-card">
+                  <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
                     <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
                     <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
                     <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                    <span className="text-eyebrow ml-2 text-faint">
-                      Pattern-to-Belief Map
-                    </span>
-                    <span className="cred-chip ml-auto !py-1.5 !text-xs">
-                      Illustrative
+                    <span className="text-eyebrow ml-2 truncate text-faint">
+                      Your Belief Score report
                     </span>
                   </div>
-                  <div className="space-y-5 px-6 py-6">
-                    <div>
-                      <p className="text-eyebrow text-signal">
-                        The Repeated Moment
-                      </p>
-                      <p className="mt-1.5 text-fg">
-                        When a client is ready for a clear recommendation,
-                        more value is added instead of naming the next step.
+                  <Image
+                    src="/graphics/reportsummary.png"
+                    alt="An example Belief Score report: an overall score with scored dimensions and a written explanation of each"
+                    width={1792}
+                    height={815}
+                    sizes="(min-width: 1024px) 896px, 100vw"
+                    className="block h-auto w-full"
+                  />
+                </div>
+                <figcaption className="mt-3 text-center text-sm text-faint">
+                  Illustrative example · your own report is generated from the
+                  pattern you describe
+                </figcaption>
+              </figure>
+            </Reveal>
+
+            {/* The five fields, as icon cards rather than a bullet list. */}
+            <ul className="mt-14 grid list-none gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {MAP_FIELDS.map((field, i) => {
+                const Icon = MAP_FIELD_ICONS[i];
+                return (
+                  <Reveal as="li" key={field.title} delay={60 + i * 60}>
+                    <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-6">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-2 text-signal">
+                        <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                      </span>
+                      <h3 className="text-title mt-5">{field.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted">
+                        {field.body}
                       </p>
                     </div>
-                    <div className="hairline" />
-                    <div>
-                      <p className="text-eyebrow text-signal">
-                        A Possible Belief
-                      </p>
-                      <p className="mt-1.5 text-muted">
-                        &ldquo;Helping preserves trust. Selling risks damaging
-                        it.&rdquo;
-                      </p>
-                    </div>
-                    <div className="hairline" />
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-xl border border-line bg-surface-2 px-4 py-3">
-                        <p className="text-eyebrow text-faint">
-                          Moment to watch
-                        </p>
-                        <p className="mt-1 text-sm text-muted">
-                          The urge to add more before stating the
-                          recommendation.
-                        </p>
-                      </div>
-                      <div className="rounded-xl border border-line bg-surface-2 px-4 py-3">
-                        <p className="text-eyebrow text-faint">Next evidence</p>
-                        <p className="mt-1 text-sm text-muted">
-                          One conversation ended with a clear recommendation and
-                          decision point.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </figure>
-              </Reveal>
-            </div>
+                  </Reveal>
+                );
+              })}
+            </ul>
 
             {/* Early participant proof, kept visually secondary to the hero.
                 TODO(launch): replace with an exact approved statement. */}
@@ -775,76 +797,101 @@ export default function Home() {
 
         {/* ================= Block 03 · Silent skepticism =================
             Name the likely private objection before it becomes disengagement.
-            Direct, respectful, practical, non-defensive. */}
-        <section className="mx-auto w-full max-w-4xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-2xl">
-            <Reveal>
-              <ChapterMark>Before you scroll past</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                Coaches and Consultants Often Arrive Thinking:
-              </h2>
-            </Reveal>
-            <div className="text-body-lg mt-8 space-y-5 text-muted">
-              <Reveal>
-                <blockquote className="border-l-2 border-line pl-5 text-fg">
-                  &ldquo;My problem is not belief. I need better positioning,
-                  stronger acquisition, clearer pricing, or more qualified
-                  leads.&rdquo;
-                </blockquote>
-              </Reveal>
-              <Reveal delay={100}>
-                <p>That may be true.</p>
-              </Reveal>
-              <Reveal delay={120}>
-                <p>The Coaches and Consultants Belief Score does not replace:</p>
-              </Reveal>
-            </div>
-          </div>
 
-          {/* Set as running text, not pills. This list is a CONCESSION - the
-              things the score explicitly does not replace - and a row of
-              bordered chips with accent dots reads as a feature list, which
-              inverts the meaning. Comma-separated prose keeps it secondary and
-              lets the narrower question that follows carry the weight. */}
-          <Reveal delay={140}>
-            <p className="text-body-lg mx-auto mt-5 max-w-2xl text-muted">
-              {NOT_A_REPLACEMENT_FOR.join(", ")}.
-            </p>
-          </Reveal>
+            Structured as a REBUTTAL, because that is what the copy is: the
+            objection on the left, what the score concedes underneath it, and
+            the narrower question answering back on the right. Previously all
+            seven paragraphs ran down one 2xl column, so the shape gave no clue
+            that a turn was happening; the argument was there but invisible.
+            The two columns are separated by a rule on lg, which is the visual
+            equivalent of the "That may be true, but" pivot. */}
+        <section className="relative overflow-hidden">
+          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-0">
+              {/* Left: the objection, and what the score does not replace. */}
+              <div className="lg:pr-14">
+                <Reveal>
+                  <ChapterMark>Before you scroll past</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 className="text-headline mt-5">
+                    Coaches and Consultants Often Arrive Thinking:
+                  </h2>
+                </Reveal>
+                <Reveal delay={100}>
+                  <blockquote className="mt-8 border-l-2 border-line pl-5">
+                    <p className="text-title text-fg">
+                      &ldquo;My problem is not belief. I need better
+                      positioning, stronger acquisition, clearer pricing, or
+                      more qualified leads.&rdquo;
+                    </p>
+                  </blockquote>
+                </Reveal>
+                <Reveal delay={140}>
+                  <p className="text-body-lg mt-8 font-medium text-fg">
+                    That may be true.
+                  </p>
+                </Reveal>
+                <Reveal delay={160}>
+                  <p className="mt-6 text-eyebrow text-faint">
+                    What the score does not replace
+                  </p>
+                </Reveal>
+                {/* Two columns of short items: a concession list is easier to
+                    accept when it can be scanned than when it is a comma run. */}
+                <Reveal delay={180}>
+                  <ul className="mt-4 grid list-none gap-x-6 gap-y-2 sm:grid-cols-2">
+                    {NOT_A_REPLACEMENT_FOR.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-baseline gap-2.5 text-sm text-muted"
+                      >
+                        <span className="h-1 w-1 shrink-0 rounded-full bg-faint" aria-hidden />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              </div>
 
-          <div className="mx-auto max-w-2xl">
-            <Reveal delay={160}>
-              <p className="text-body-lg mt-10 text-muted">
-                It asks one narrower question:
-              </p>
-            </Reveal>
-            <Reveal delay={200}>
-              <p className="text-headline mt-5">
-                <span className="text-emphasis">
-                  What happens in the moment when you already know the next
-                  useful business action, but move back into helping, refining,
-                  customizing, explaining, or preparing?
-                </span>
-              </p>
-            </Reveal>
-            <div className="text-body-lg mt-9 space-y-3 text-muted">
-              <Reveal delay={220}>
-                <p>You do not have to accept another label.</p>
-              </Reveal>
-              <Reveal delay={240}>
-                <p>
-                  You do not have to treat every commercial problem as an
-                  internal problem.
-                </p>
-              </Reveal>
-              <Reveal delay={260}>
-                <p className="font-medium text-fg">
-                  You only have to decide whether the repeated moment is worth
-                  examining.
-                </p>
-              </Reveal>
+              {/* Right: the turn. The rule is the pivot made visible. */}
+              <div className="lg:border-l lg:border-line lg:pl-14">
+                <Reveal delay={120}>
+                  <p className="text-eyebrow text-signal">
+                    It asks one narrower question
+                  </p>
+                </Reveal>
+                <Reveal delay={160}>
+                  {/* Deliberately NOT text-headline: in a half-width column
+                      that ran seven lines and overpowered the objection it is
+                      answering. This keeps the italic emphasis (the pivot is
+                      still the loudest thing in the column) at a size that
+                      balances the left. */}
+                  <p className="mt-6 text-2xl leading-snug sm:text-3xl">
+                    <span className="text-emphasis">
+                      What happens in the moment when you already know the next
+                      useful business action, but move back into helping,
+                      refining, customizing, explaining, or preparing?
+                    </span>
+                  </p>
+                </Reveal>
+                <div className="mt-10 space-y-4">
+                  {[
+                    "You do not have to accept another label.",
+                    "You do not have to treat every commercial problem as an internal problem.",
+                  ].map((line, i) => (
+                    <Reveal key={line} delay={200 + i * 40}>
+                      <p className="text-body-lg text-muted">{line}</p>
+                    </Reveal>
+                  ))}
+                  <Reveal delay={280}>
+                    <p className="text-body-lg border-t border-line pt-4 font-medium text-fg">
+                      You only have to decide whether the repeated moment is
+                      worth examining.
+                    </p>
+                  </Reveal>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -854,21 +901,24 @@ export default function Home() {
             direct invitation. */}
         <section className="border-t border-line bg-surface">
           <div className="mx-auto w-full max-w-5xl px-5 py-24 sm:px-8 sm:py-36">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <p className="chapter justify-center text-eyebrow">
-                  <span className="chapter-dot" aria-hidden />
-                  <span>Sound familiar</span>
-                </p>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  The Coaching Is Good. The Consulting Works. The Client
-                  Results Are Real.
-                </h2>
-              </Reveal>
+            {/* Opens as a split, not centred. This is the fourth section and
+                the third centred header in a row would flatten the page; the
+                heading also carries three short sentences that read better
+                stacked left than balanced on a centre axis. */}
+            <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16">
+              <div>
+                <Reveal>
+                  <ChapterMark>Sound familiar</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 className="text-headline mt-5">
+                    The Coaching Is Good. The Consulting Works. The Client
+                    Results Are Real.
+                  </h2>
+                </Reveal>
+              </div>
               <Reveal delay={100}>
-                <p className="text-body-lg mt-6 text-muted">
+                <p className="text-body-lg text-muted lg:pb-2">
                   Watch one familiar moment turn back into more teaching, the
                   same way it does every time.
                 </p>
@@ -937,7 +987,10 @@ export default function Home() {
                 chips reads like a feature list. */}
             <Reveal delay={120}>
               <div className="mx-auto mt-16 max-w-3xl">
-                <p className="text-body-lg text-muted">
+                <p className="text-eyebrow text-faint">
+                  What it quietly costs
+                </p>
+                <p className="text-body-lg mt-4 text-muted">
                   The work remains alive. But the commercial cycle stays
                   incomplete:
                 </p>
@@ -960,32 +1013,154 @@ export default function Home() {
             {/* The reinforcing loop. Set as a wrapping chain of small steps
                 rather than a bordered card: the point is that it never stops
                 and comes back around, which a boxed panel contradicts. */}
+            {/* The loop, drawn rather than described.
+
+                This is the one idea on the page that is genuinely circular:
+                each step feeds the next and the last returns to the first. As
+                a wrapping line of text with arrows it read as a list that
+                happened to end with a curved arrow; as a ring the "it comes
+                back" claim is visible before a word is read. Six nodes on a
+                circle, arrowheads following the direction of travel, and the
+                closing arc drawn in the accent so the return is the emphasised
+                edge.
+
+                Hand-authored inline SVG: currentColor for strokes and text so
+                it themes with the page, one literal accent on the closing edge,
+                role="img" + aria-label carrying the same claim for anyone who
+                cannot see it. */}
             <Reveal delay={130}>
-              <div className="mx-auto mt-14 max-w-3xl">
-                <p className="text-eyebrow text-faint">Then the loop closes</p>
-                <p className="mt-5 flex flex-wrap items-center gap-x-2.5 gap-y-2">
-                  {RECOGNITION_LOOP.map((step, i) => (
-                    <span key={step} className="inline-flex items-center gap-2.5">
-                      <span className="text-fg">{step}</span>
-                      {i < RECOGNITION_LOOP.length - 1 && (
-                        <span aria-hidden className="text-signal/70">
-                          &rarr;
-                        </span>
-                      )}
-                    </span>
-                  ))}
-                  {/* The loop returning to its start, stated as part of the
-                      chain rather than as a footnote under it. */}
-                  <span aria-hidden className="text-signal/70">
-                    &#8618;
-                  </span>
-                  <span className="text-faint">back to the beginning</span>
+              <figure className="mx-auto mt-14 max-w-3xl">
+                <p className="text-eyebrow text-center text-faint">
+                  Then the loop closes
                 </p>
-                <p className="mt-5 text-sm text-faint">
-                  And because action finally arrives under pressure, pressure
+                <svg
+                  viewBox="0 0 820 470"
+                  role="img"
+                  aria-label="A closed cycle of six steps: the pipeline becomes quiet, revenue pressure rises, selling becomes urgent, the next conversation carries more weight, action finally arrives under pressure, pressure receives the credit, and the cycle returns to the beginning."
+                  className="mt-6 h-auto w-full text-muted"
+                >
+                  <defs>
+                    <marker
+                      id="loop-arrow"
+                      viewBox="0 0 10 10"
+                      refX="9"
+                      refY="5"
+                      markerWidth="5"
+                      markerHeight="5"
+                      orient="auto-start-reverse"
+                    >
+                      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" />
+                    </marker>
+                  </defs>
+
+                  {/* Six connecting arcs around a 150px-radius circle centred
+                      at (310,190). Each spans the gap between two nodes. */}
+                  {RECOGNITION_LOOP.map((_, i) => {
+                    const n = RECOGNITION_LOOP.length;
+                    const gap = 0.34; // radians trimmed at each end for the node
+                    const a0 = (i / n) * Math.PI * 2 - Math.PI / 2 + gap;
+                    const a1 = ((i + 1) / n) * Math.PI * 2 - Math.PI / 2 - gap;
+                    const r = 140;
+                    const x0 = 410 + r * Math.cos(a0);
+                    const y0 = 215 + r * Math.sin(a0);
+                    const x1 = 410 + r * Math.cos(a1);
+                    const y1 = 215 + r * Math.sin(a1);
+                    const last = i === n - 1;
+                    return (
+                      <path
+                        key={i}
+                        d={`M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={last ? 2 : 1.25}
+                        className={last ? "text-signal" : "text-line"}
+                        markerEnd="url(#loop-arrow)"
+                        opacity={last ? 1 : 0.75}
+                      />
+                    );
+                  })}
+
+                  {/* Nodes: a numbered dot plus the step, set on two lines so
+                      long phrases do not collide with their neighbours. */}
+                  {RECOGNITION_LOOP.map((step, i) => {
+                    const n = RECOGNITION_LOOP.length;
+                    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+                    const x = 410 + 140 * Math.cos(a);
+                    const y = 215 + 140 * Math.sin(a);
+                    // Push labels outward, away from the ring's centre. The
+                    // viewBox carries ~190px of runway each side and ~60px top
+                    // and bottom so no label is ever clipped.
+                    const lx = 410 + 168 * Math.cos(a);
+                    const ly = 215 + 168 * Math.sin(a);
+                    const anchor =
+                      Math.abs(Math.cos(a)) < 0.25
+                        ? "middle"
+                        : Math.cos(a) > 0
+                          ? "start"
+                          : "end";
+                    const words = step.split(" ");
+                    const mid = Math.ceil(words.length / 2);
+                    const l1 = words.length > 3 ? words.slice(0, mid).join(" ") : step;
+                    const l2 = words.length > 3 ? words.slice(mid).join(" ") : "";
+                    return (
+                      <g key={step}>
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="5"
+                          fill="currentColor"
+                          className="text-signal"
+                        />
+                        <text
+                          x={lx}
+                          y={ly - (l2 ? 6 : 0)}
+                          textAnchor={anchor}
+                          fontSize="13"
+                          fill="currentColor"
+                        >
+                          {l1}
+                        </text>
+                        {l2 && (
+                          <text
+                            x={lx}
+                            y={ly + 11}
+                            textAnchor={anchor}
+                            fontSize="13"
+                            fill="currentColor"
+                          >
+                            {l2}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+
+                  <text
+                    x="410"
+                    y="210"
+                    textAnchor="middle"
+                    fontSize="13"
+                    fill="currentColor"
+                    className="text-faint"
+                  >
+                    and it starts
+                  </text>
+                  <text
+                    x="410"
+                    y="228"
+                    textAnchor="middle"
+                    fontSize="13"
+                    fill="currentColor"
+                    className="text-faint"
+                  >
+                    again
+                  </text>
+                </svg>
+                <figcaption className="mx-auto mt-4 max-w-xl text-center text-sm text-faint">
+                  Because action finally arrives under pressure, pressure
                   receives the credit. Again.
-                </p>
-              </div>
+                </figcaption>
+              </figure>
             </Reveal>
 
             {/* The central reframe: the payoff the whole section builds toward.
@@ -1141,26 +1316,39 @@ export default function Home() {
         </section>
 
         {/* ============ Block 06 · The Pattern-to-Belief Map ============ */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <ChapterMark>The mechanism</ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  Your Coaches and Consultants Belief Score Creates a
-                  Pattern-to-Belief Map
-                </h2>
-              </Reveal>
-              <Reveal delay={120}>
-                <p className="text-body-lg mt-6 text-muted">
-                  The score does not give you another business archetype,
-                  marketing personality, or readiness label. It focuses on one
-                  pattern that matters now, broken into five connected stages.
-                </p>
-              </Reveal>
-            </div>
+        <section className="relative overflow-hidden border-t border-line bg-surface">
+          <div className="section-orbs" aria-hidden />
+          <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+            {/* Sticky two-column instead of a centred header over a tall
+                column. Nine of thirteen sections opened centred, so the page
+                had no change of shape to hold the eye; here the heading pins
+                while the five stages travel past it, which also keeps the
+                reader oriented in a long sequence. Collapses to normal stacked
+                flow below lg. */}
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <Reveal>
+                  <ChapterMark>The mechanism</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 className="text-headline mt-5">
+                    Your Coaches and Consultants Belief Score Creates a
+                    Pattern-to-Belief Map
+                  </h2>
+                </Reveal>
+                <Reveal delay={120}>
+                  <p className="text-body-lg mt-6 text-muted">
+                    Not another business archetype, marketing personality, or
+                    readiness label. One pattern that matters now, broken into
+                    five connected stages.
+                  </p>
+                </Reveal>
+                <Reveal delay={160}>
+                  <p className="text-eyebrow mt-8 text-faint">
+                    Five stages
+                  </p>
+                </Reveal>
+              </div>
 
             {/* A spine, not a 5-across card row.
 
@@ -1174,7 +1362,7 @@ export default function Home() {
                 The rail is the argument made visible: one continuous line with
                 the stage number sitting on it. Numbering earns its place here
                 because the order genuinely carries meaning. */}
-            <ol className="mx-auto mt-14 max-w-3xl list-none">
+              <ol className="list-none">
               {MAP_STAGES.map((stage, i) => (
                 <Reveal as="li" key={stage.title} delay={i * 70}>
                   {/* pb-14 (not pb-9): the gap BETWEEN stages has to be clearly
@@ -1205,13 +1393,14 @@ export default function Home() {
                   </div>
                 </Reveal>
               ))}
-            </ol>
+              </ol>
+            </div>
 
             <Reveal delay={120}>
               <CtaBlock
                 location="score_definition"
                 microcopy="Short guided reflection · Personalized result · No credit card"
-                className="mt-14"
+                className="mt-16"
               />
             </Reveal>
           </div>
@@ -1372,7 +1561,7 @@ export default function Home() {
                   <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
                   <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
                   <span className="text-eyebrow ml-2 truncate text-faint">
-                    AI Merge · Pattern-to-Belief Map
+                    Your Pattern-to-Belief Map
                   </span>
                 </div>
 
@@ -1412,6 +1601,42 @@ export default function Home() {
               </figure>
             </Reveal>
           </div>
+
+          {/* The downloadable summary only. The scored report itself already
+              leads Block 02 ("What you receive"); repeating it here showed the
+              same artifact twice within one scroll. This is the other half of
+              what gets delivered - the version you keep - so it still earns a
+              place, just not a duplicated one.
+
+              NOTE ON CONTENT: this is a capture of the current live report, so
+              the wording inside it is that product's rather than final
+              coach-specific copy. TODO(launch): replace with the approved
+              Coaches and Consultants capture. */}
+          <Reveal delay={160}>
+            <figure className="mx-auto mt-10 max-w-3xl">
+              <div className="media-frame overflow-hidden rounded-2xl bg-card">
+                <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                  <span className="text-eyebrow ml-2 truncate text-faint">
+                    Your summary, ready to keep
+                  </span>
+                </div>
+                <Image
+                  src="/graphics/reportpdf.png"
+                  alt="Example of the downloadable AI Merge report summary"
+                  width={988}
+                  height={769}
+                  sizes="(min-width: 1024px) 768px, 100vw"
+                  className="block h-auto w-full"
+                />
+              </div>
+              <figcaption className="mt-3 text-center text-sm text-faint">
+                The same result, as a summary you can keep and share
+              </figcaption>
+            </figure>
+          </Reveal>
 
           <div className="mx-auto mt-14 max-w-2xl text-center">
             <Reveal>
@@ -1607,16 +1832,28 @@ export default function Home() {
               <Reveal delay={160}>
                 <div className="mt-10 rounded-2xl border border-line bg-card p-7">
                   <p className="text-eyebrow text-faint">About the Creator</p>
-                  <ul className="mt-4 grid list-none gap-2.5 sm:grid-cols-2">
-                    {CREDENTIALS.map((c) => (
-                      <li
-                        key={c}
-                        className="flex items-start gap-2.5 text-sm text-muted"
-                      >
-                        <span className="list-dot mt-1.5 shrink-0" aria-hidden />
-                        {c}
-                      </li>
-                    ))}
+                  {/* Label above value, with an icon, rather than a bulleted
+                      list: these are four discrete facts, and a stat row lets
+                      each be read on its own instead of scanned as prose. */}
+                  <ul className="mt-5 grid list-none gap-x-6 gap-y-5 sm:grid-cols-2">
+                    {CREDENTIALS.map((c, i) => {
+                      const Icon = CREDENTIAL_ICONS[i];
+                      return (
+                        <li key={c.label} className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface-2 text-signal">
+                            <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="text-eyebrow block text-faint">
+                              {c.label}
+                            </span>
+                            <span className="mt-1 block text-sm leading-snug text-fg">
+                              {c.value}
+                            </span>
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <p className="mt-5 text-sm leading-relaxed text-faint">
                     AI Merge combines AI-supported pattern recognition with a
@@ -1713,7 +1950,7 @@ export default function Home() {
             <div className="mt-16">
               <Reveal delay={100}>
                 <p className="text-eyebrow text-center text-faint">
-                  More from AI Merge participants
+                  More in their own words
                 </p>
               </Reveal>
               <Reveal immediate>
@@ -1789,19 +2026,31 @@ export default function Home() {
               a table does not need to sit on a panel to read as a table. */}
           <Reveal delay={160}>
             <div className="mt-12 border-t border-line">
-              <div className="hidden gap-8 border-b border-line py-4 md:grid md:grid-cols-[minmax(0,14rem)_1fr]">
+              <div className="hidden border-b border-line py-4 md:grid md:grid-cols-[minmax(0,13rem)_auto_1fr] md:gap-x-6">
                 <p className="text-eyebrow text-faint">Existing support</p>
-                <p className="text-eyebrow text-faint">
+                <span aria-hidden />
+                <p className="text-eyebrow text-signal">
                   What the Belief Score examines
                 </p>
               </div>
+              {/* A chevron sits in the gutter of every row. The table's whole
+                  argument is that these are two LAYERS - the tool you already
+                  use, and the belief operating underneath it - and the mark
+                  makes the crossing visible instead of leaving two columns to
+                  imply it. Hidden below md, where the row stacks and the
+                  eyebrow already labels the second half. */}
               <ul className="list-none">
                 {DIFFERENTIATION.map((row) => (
                   <li
                     key={row.support}
-                    className="border-b border-line py-5 md:grid md:grid-cols-[minmax(0,14rem)_1fr] md:gap-8"
+                    className="border-b border-line py-5 md:grid md:grid-cols-[minmax(0,13rem)_auto_1fr] md:items-baseline md:gap-x-6"
                   >
                     <p className="font-medium text-fg">{row.support}</p>
+                    <ArrowRight
+                      className="hidden h-4 w-4 shrink-0 translate-y-0.5 text-signal/60 md:block"
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
                     <p className="mt-1.5 leading-relaxed text-muted md:mt-0">
                       {row.examines}
                     </p>
@@ -1846,20 +2095,90 @@ export default function Home() {
             </div>
 
             <ol className="mt-12 grid list-none gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {HOW_STEPS.map((step, i) => (
-                <Reveal as="li" key={step.title} delay={i * 60}>
-                  <div className="liftable h-full rounded-2xl border border-line bg-card p-7">
-                    <span className="text-eyebrow text-signal">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-title mt-3">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted">
-                      {step.body}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
+              {HOW_STEPS.map((step, i) => {
+                const Icon = HOW_STEP_ICONS[i];
+                return (
+                  <Reveal as="li" key={step.title} delay={i * 60}>
+                    <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-7">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-2 text-signal">
+                          <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                        </span>
+                        <span className="text-eyebrow text-faint tabular-nums">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3 className="text-title mt-5">{step.title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-muted">
+                        {step.body}
+                      </p>
+                    </div>
+                  </Reveal>
+                );
+              })}
             </ol>
+
+            {/* The two ends of the flow, as real captures: where you begin and
+                what the guided reflection looks like a few steps in. Same
+                window-chrome frame as the result captures above.
+
+                NOTE ON CONTENT: both are from the current live AI Merge
+                assessment, so the on-screen copy (and the step counter visible
+                in the second) belongs to that product rather than to
+                coach-specific wording. Published on instruction and captioned
+                as illustrative. TODO(launch): replace with captures of the
+                approved Coaches and Consultants flow. */}
+            <Reveal delay={90}>
+              <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
+                <figure>
+                  <div className="media-frame overflow-hidden rounded-2xl bg-card">
+                    <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                      <span className="text-eyebrow ml-2 truncate text-faint">
+                        Step one · Getting started
+                      </span>
+                    </div>
+                    <Image
+                      src="/graphics/audience.png"
+                      alt="The opening screen of the AI Merge reflection, asking who is taking it and which path to follow"
+                      width={1880}
+                      height={892}
+                      sizes="(min-width: 768px) 560px, 100vw"
+                      className="block h-auto w-full"
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-center text-sm text-faint">
+                    Where you begin
+                  </figcaption>
+                </figure>
+
+                <figure>
+                  <div className="media-frame overflow-hidden rounded-2xl bg-card">
+                    <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
+                      <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
+                      <span className="text-eyebrow ml-2 truncate text-faint">
+                        Working through the reflection
+                      </span>
+                    </div>
+                    <Image
+                      src="/graphics/beat.png"
+                      alt="A later screen in the AI Merge reflection, showing progress through the questions"
+                      width={1879}
+                      height={891}
+                      sizes="(min-width: 768px) 560px, 100vw"
+                      className="block h-auto w-full"
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-center text-sm text-faint">
+                    Working through it, one prompt at a time
+                  </figcaption>
+                </figure>
+              </div>
+            </Reveal>
 
             {/* Step 1's example patterns: this list is what keeps the page
                 coherent for every approved ad angle (ad-to-page continuity). */}
@@ -2043,9 +2362,9 @@ export default function Home() {
             <Reveal delay={120}>
               <ul className="mx-auto mt-8 grid max-w-xl list-none gap-3 text-left">
                 {MAP_FIELDS.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
+                  <li key={item.title} className="flex items-start gap-3">
                     <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                    <span className="text-body-lg text-muted">{item}</span>
+                    <span className="text-body-lg text-muted">{item.title}</span>
                   </li>
                 ))}
               </ul>
