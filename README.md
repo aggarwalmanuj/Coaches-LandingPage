@@ -35,15 +35,15 @@ real lead in the live database.
   `LetterReveal`, `MagneticButton`, `CursorHalo`, `ParallaxImage`). All of them
   no-op on touch and under `prefers-reduced-motion`.
 - `components/walkthrough.tsx`, the auto-advancing four-step product tour.
-- `components/visuals/`, presentational pieces: `EditorialFigure` (photography
-  with parallax, hover-zoom and a captioned rule), `DeviceFrame` (app-window
+- `components/visuals/`, presentational pieces: `DeviceFrame` (app-window
   chrome), `score-visuals.tsx` (`ScoreRing`, `PillarDial`), `report-preview.tsx`
-  (page one of the report artifact) and `screens.tsx` (the four rendered
-  assessment screens the walkthrough displays).
+  (page one of the report artifact) and `scene-cards.tsx` (the three drawn
+  scenes in the recognition block).
 - `lib/pillars.ts`, the four scored dimensions: order, colours, icons, labels
   and the sample values. Deliberately NOT a client module, see the note below.
-- `public/images/`, the atmospheric photography. `public/graphics/`, product
-  captures (currently unused, see the note below).
+- `public/graphics/coaches/`, real captures of the coaches funnel, in desktop
+  and phone variants. There is no `public/images/`: this page uses no stock
+  photography (see the note below).
 
 ## Single sources of truth
 
@@ -123,6 +123,24 @@ removed with the sections they belonged to; `what_you_get` was renamed
   removed from the recognition block for exactly this reason. IMG-03/04/05 in
   the v3.0 manifest are staged scenes to be shot alongside the ad creative for
   ads 01, 14 and 15; they belong inside the three act cards when they exist.
+- **Every section carries a graphic**, and each one is the right KIND of
+  graphic for what that section is doing: the hero has the VSL, "what you
+  receive" has the report artifact, the pillars have coloured dials, the
+  walkthrough has real product captures, the recognition block has three drawn
+  scenes (`components/visuals/scene-cards.tsx`), proof has typographic quote
+  cards plus the founder portrait and logo band, the FAQ has the four
+  reassurance cards, and the close has the pillar recap strip. The close
+  deliberately has no IMAGE - v3.0 is right that anything beside the final
+  button gives the eye a second place to stop - so its graphic sits above the
+  headline and recaps rather than introduces.
+- **No unshrinkable descendants inside a grid or flex track.** `truncate`
+  implies `white-space: nowrap`, and a nowrap flex item contributes its FULL
+  string width to every ancestor's min-content. One such label inside the
+  report card forced the "what you receive" column to 409px on a 320px screen;
+  `overflow-x: clip` on `<html>` hid the scrollbar but the copy was being cut
+  off. Pair every `truncate` with `min-w-0`, and put `min-w-0` on grid items
+  that hold arbitrary content. `scratchpad/audit.mjs`-style checks catch this;
+  a plain `document.scrollWidth` check does NOT, because the clip hides it.
 - **Every product example carries its "Illustrative example" label INSIDE the
   artifact**, not only in a caption beneath it. A caption is a separate element
   that can be cropped out of a screenshot, scrolled past, or dropped by a
@@ -149,8 +167,24 @@ removed with the sections they belonged to; `what_you_get` was renamed
   every categorical disclaimer. **Disclaimers from deleted sections were folded
   into the Essential Questions accordion, not dropped** - check what an answer
   is carrying before trimming it. The page went from ~26,000px to ~11,500px.
-- **`public/graphics/*.png` are currently UNUSED, and should not be put back
-  without re-capturing.** All four are captures of the wrong vertical:
+- **`public/graphics/coaches/*` are real captures of the COACHES funnel**, at
+  `vertical=coaches` - the vertical `lp=coaches-consultants` actually resolves
+  to. Two variants per screen: a desktop capture and a separate capture taken
+  at phone width. They are NOT the same image resized. A 1280px capture in a
+  350px phone column renders its UI text at 2-3px, which is decoration
+  pretending to be evidence, so the walkthrough art-directs with `<picture>`
+  (next/image cannot swap the source file at a breakpoint, and two toggled
+  `<Image>`s would make the phone download the desktop file it never shows).
+
+  To re-capture: run the funnel repo locally, seed
+  `localStorage["ufa-challenge"]` with a completed coaches session, and shoot
+  `/challenge/audience?vertical=coaches`, `/challenge/coaches/beat-1`,
+  `/challenge/coaches/processing` and `/challenge/coaches/summary`. **Seed
+  rather than complete the funnel**: a real run writes a lead row to the
+  production database and spends LLM and speech credits. Hide the localhost-only
+  vertical dev switcher (`.fixed.bottom-3.left-3`) before shooting.
+- **The previous `public/graphics/*.png` were deleted.** All four were captures
+  of the wrong vertical:
   - `reportsummary.png` / `reportpdf.png` come from the main B2C funnel. They
     render "Clarity Readiness Index" and the B2C pillar names (Direction
     Clarity / Identity Alignment / Decision Readiness / Energy Alignment). The
@@ -165,8 +199,7 @@ removed with the sections they belonged to; `what_you_get` was renamed
   - `audience.png` offers an "Individual / Team & Organization" path choice.
     The `team` audience was retired from the funnel in July 2026.
 
-  `components/visuals/screens.tsx` renders replacements that are on-palette and
-  coach-accurate. Delete it once real `vertical=coaches` captures exist.
+  They are replaced by the real coaches captures described above.
 - **The pillar labels are not ours to reword.** `lp=coaches-consultants`
   resolves (server-side, via `VERTICAL_ALIASES`) to the funnel's `coaches`
   vertical, so the labels in `lib/pillars.ts` are the exact words a visitor's

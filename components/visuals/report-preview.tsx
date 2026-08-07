@@ -45,8 +45,18 @@ export function ReportPreviewCard({
           off in a screenshot, scrolled past, or dropped by a future call site,
           and the numbers below are invented. Label travels with the thing it
           labels. */}
-      <div className="mb-5 flex items-center justify-between gap-3 border-b border-line pb-4">
-        <span className="truncate text-[9px] uppercase tracking-[0.2em] text-faint">
+      {/* `min-w-0` on the truncating span is load-bearing, not tidiness.
+          `truncate` includes `white-space: nowrap`, and a nowrap flex item
+          contributes its FULL string width to its ancestors' min-content. This
+          card sits in a grid that collapses to ONE column below `lg`, so that
+          367px of unshrinkable header propagated up and forced the whole
+          mobile column to 409px on a 320px screen - the heading and body copy
+          beside it were being clipped by the page's `overflow-x: clip`, which
+          hides the scrollbar but not the damage. min-w-0 lets it ellipsize as
+          intended. `flex-wrap` is the belt: on the narrowest screens the chip
+          drops to its own line rather than squeezing the title to nothing. */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-line pb-4">
+        <span className="min-w-0 flex-1 truncate text-[9px] uppercase tracking-[0.2em] text-faint">
           Coaches and Consultants Belief Score
         </span>
         <span className="shrink-0 rounded-full border border-line px-2 py-0.5 text-[8.5px] uppercase tracking-[0.14em] text-faint">

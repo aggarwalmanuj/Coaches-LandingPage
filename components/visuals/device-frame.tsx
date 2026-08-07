@@ -27,8 +27,14 @@ export function DeviceFrame({
           <span className="h-2.5 w-2.5 rounded-full bg-[#4fa763]" />
         </span>
         {/* Nudged left by the traffic-light cluster's width so the label sits
-            optically centred rather than mathematically centred. */}
-        <span className="mx-auto -translate-x-4 truncate rounded-md border border-line/60 bg-bg/60 px-3 py-0.5 text-[9.5px] uppercase tracking-[0.18em] text-faint">
+            optically centred rather than mathematically centred.
+
+            `min-w-0` matters here: `truncate` implies `white-space: nowrap`,
+            and a nowrap flex item reports its FULL string width as min-content,
+            which widens every ancestor including the grid track this frame
+            sits in. Without it the title cannot ellipsize and instead pushes
+            the layout wider than the phone. */}
+        <span className="mx-auto min-w-0 -translate-x-4 truncate rounded-md border border-line/60 bg-bg/60 px-3 py-0.5 text-[10px] uppercase tracking-[0.18em] text-faint">
           {title}
         </span>
       </div>

@@ -4,9 +4,12 @@ import ReactDOM from "react-dom";
 import {
   ArrowUpRight,
   Award,
+  BadgeCheck,
   Building2,
+  CreditCard,
   Eye,
   FileText,
+  Compass,
   MessageSquareQuote,
   RefreshCw,
   Repeat,
@@ -31,8 +34,15 @@ import { Walkthrough } from "@/components/walkthrough";
 import { LetterReveal, MagneticButton, WordReveal } from "@/components/motion";
 import { DeviceFrame } from "@/components/visuals/device-frame";
 import { ReportPreviewCard } from "@/components/visuals/report-preview";
+import { RECOGNITION_SCENES } from "@/components/visuals/scene-cards";
 import { PillarDial } from "@/components/visuals/score-visuals";
-import { PILLAR_ORDER, SAMPLE_SUBSCORES } from "@/lib/pillars";
+import {
+  PILLAR_COLORS,
+  PILLAR_ICONS,
+  PILLAR_LABELS,
+  PILLAR_ORDER,
+  SAMPLE_SUBSCORES,
+} from "@/lib/pillars";
 import type { CtaLocation } from "@/lib/analytics";
 import { DOORWAY_FAQS, toFaqEntries } from "@/lib/faq";
 import { LINKS } from "@/lib/seo";
@@ -179,6 +189,40 @@ const CREDENTIALS = [
 ];
 
 const CREDENTIAL_ICONS = [Building2, Award, FileText, Sparkles];
+
+/* The four things a visitor is actually agreeing to, stated once beside the
+   accordion. This exists because the Essential Questions block was the one
+   section on the page with nothing to look at: a column of collapsed rows
+   reads as fine print, and fine print next to a CTA is where hesitation
+   collects. Each row is a fact already stated in approved copy - the card
+   restates them where the doubt is, with the pillar palette carrying the
+   colour so the section belongs to the same system as the score. */
+const REASSURANCES = [
+  {
+    Icon: BadgeCheck,
+    label: "The complete score is free",
+    body: "You receive the full result before any optional paid step is mentioned.",
+    color: "var(--pillar-1)",
+  },
+  {
+    Icon: CreditCard,
+    label: "No credit card",
+    body: "Nothing to enter, nothing to cancel.",
+    color: "var(--pillar-2)",
+  },
+  {
+    Icon: FileText,
+    label: "Yours to keep",
+    body: "Your score and your Pattern-to-Belief Map are sent to you.",
+    color: "var(--pillar-3)",
+  },
+  {
+    Icon: Compass,
+    label: "Reflective, not diagnostic",
+    body: "A hypothesis to check against your own judgment. Not an evaluation of you.",
+    color: "var(--pillar-4)",
+  },
+];
 
 /* TODO(launch): verify exact wording, name or approved anonymity,
    professional role, program referenced, written consent, and display
@@ -415,8 +459,15 @@ export default function Home() {
           <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
             <SectionViewTracker event="whatyouget_view" />
 
+            {/* `min-w-0` on both items. Grid items default to `min-width:
+                auto`, which means ANY unshrinkable descendant (a nowrap label,
+                a long token, a fixed-width control) silently widens the track
+                past the container instead of wrapping. Below `lg` this is a
+                single column, so one such descendant blows out the whole
+                section on a phone. This is the second line of defence; the
+                first is not creating unshrinkable descendants. */}
             <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <div>
+              <div className="min-w-0">
                 <Reveal>
                   <ChapterMark numeral="I">What you receive</ChapterMark>
                 </Reveal>
@@ -449,7 +500,10 @@ export default function Home() {
                     in a caption someone may scroll past. */}
                 <Reveal delay={130}>
                   <p className="mt-6">
-                    <span className="rounded-full border border-line px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-faint">
+                    {/* 11px, not 10px: this is a compliance label sitting in
+                        the page's own reading column, not chrome inside the
+                        mock, so it has to survive being read on a phone. */}
+                    <span className="rounded-full border border-line px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-faint">
                       Illustrative example
                     </span>
                   </p>
@@ -499,7 +553,7 @@ export default function Home() {
                   than screenshotted so it cannot drift from the palette and
                   cannot leak a fact the spec forbids publishing. Its numbers
                   are illustrative and the caption says so directly beneath. */}
-              <Reveal delay={140}>
+              <Reveal delay={140} className="min-w-0">
                 <div className="relative mx-auto w-full max-w-md lg:max-w-none">
                   <DeviceFrame title="your-belief-score">
                     <ReportPreviewCard />
@@ -632,7 +686,9 @@ export default function Home() {
             </div>
 
             <ol className="mt-14 grid list-none gap-4 md:grid-cols-3 md:gap-5">
-              {RECOGNITION_ACTS.map((act, i) => (
+              {RECOGNITION_ACTS.map((act, i) => {
+                const Scene = RECOGNITION_SCENES[i];
+                return (
                 <Reveal
                   as="li"
                   key={act.label}
@@ -640,7 +696,7 @@ export default function Home() {
                   className="relative"
                 >
                   <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-7">
-                    <div className="flex items-center gap-3">
+                    <div className="mb-6 flex items-center gap-3">
                       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2 text-xs font-semibold text-signal">
                         {i + 1}
                       </span>
@@ -648,7 +704,12 @@ export default function Home() {
                         {act.label}
                       </span>
                     </div>
-                    <p className="text-title mt-5">{act.lead}</p>
+                    {/* The drawn scene for this act. Three artifacts, one tell:
+                        work finished everywhere except the field that would ask
+                        for a decision. See components/visuals/scene-cards.tsx
+                        for why these are drawn rather than photographed. */}
+                    <Scene />
+                    <p className="text-title">{act.lead}</p>
                     <p className="mt-4 text-sm leading-relaxed text-muted">
                       {act.body}
                     </p>
@@ -677,7 +738,8 @@ export default function Home() {
                     </span>
                   )}
                 </Reveal>
-              ))}
+                );
+              })}
             </ol>
 
             {/* NO PHOTOGRAPH HERE, and none anywhere on this page.
@@ -769,12 +831,59 @@ export default function Home() {
             <ul className="mt-12 grid list-none gap-5 md:grid-cols-2">
               {TESTIMONIALS.map((t, i) => (
                 <Reveal as="li" key={t.name} delay={i * 80}>
-                  <figure className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-8">
-                    <blockquote className="text-title flex-1">
+                  {/* Typographic, deliberately. The image rules forbid putting
+                      a stock portrait next to a quote from someone who is not
+                      that person - manufactured proof is the fastest way to
+                      lose a skeptical professional reader. So the VISUAL is
+                      typography: an oversized quote glyph in the pillar colour,
+                      a coloured top rule, and a bar of ink. No faces borrowed
+                      from anyone. */}
+                  <figure
+                    className="liftable relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card p-8 pt-9"
+                    style={{
+                      borderColor: `color-mix(in srgb, ${
+                        [PILLAR_COLORS.directionClarity, PILLAR_COLORS.decisionReadiness][i]
+                      } 24%, var(--border))`,
+                    }}
+                  >
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-0 top-0 h-0.5"
+                      style={{
+                        background: [
+                          PILLAR_COLORS.directionClarity,
+                          PILLAR_COLORS.decisionReadiness,
+                        ][i],
+                        opacity: 0.65,
+                      }}
+                    />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -right-2 -top-6 select-none font-serif text-[9rem] leading-none"
+                      style={{
+                        color: [
+                          PILLAR_COLORS.directionClarity,
+                          PILLAR_COLORS.decisionReadiness,
+                        ][i],
+                        opacity: 0.1,
+                      }}
+                    >
+                      &rdquo;
+                    </span>
+                    <blockquote className="text-title relative flex-1">
                       &ldquo;{t.quote}&rdquo;
                     </blockquote>
-                    <figcaption className="mt-6 flex items-center gap-2.5 text-sm">
-                      <span className="list-dot shrink-0" aria-hidden />
+                    <figcaption className="relative mt-6 flex items-center gap-2.5 text-sm">
+                      <span
+                        className="h-1.5 w-1.5 shrink-0 rounded-full"
+                        style={{
+                          background: [
+                            PILLAR_COLORS.directionClarity,
+                            PILLAR_COLORS.decisionReadiness,
+                          ][i],
+                        }}
+                        aria-hidden
+                      />
                       <span className="font-medium text-fg">{t.name}</span>
                       <span className="text-faint">· {t.role}</span>
                     </figcaption>
@@ -932,20 +1041,57 @@ export default function Home() {
             entire former differentiation block. Do not trim these answers
             without checking what else used to carry the same statement. */}
         <section className="relative overflow-hidden">
-          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
-            <Reveal>
-              <ChapterMark numeral="VI" className="justify-center">
-                Before you start
-              </ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5 text-center">
-                Essential questions
-              </h2>
-            </Reveal>
+          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+            <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+              {/* Left rail: the heading and the reassurance card. Sticky on
+                  desktop so the four guarantees stay beside whichever question
+                  the reader has opened. */}
+              <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
+                <Reveal>
+                  <ChapterMark numeral="VI">Before you start</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 className="text-headline mt-5">Essential questions</h2>
+                </Reveal>
 
-            <Reveal delay={80}>
-              <div className="mt-10">
+                <ul className="mt-9 grid list-none gap-3">
+                  {REASSURANCES.map(({ Icon, label, body, color }, i) => (
+                    <Reveal as="li" key={label} delay={100 + i * 60}>
+                      <div
+                        className="flex items-start gap-3.5 rounded-xl border bg-card p-4"
+                        style={{
+                          borderColor: `color-mix(in srgb, ${color} 26%, var(--border))`,
+                        }}
+                      >
+                        <span
+                          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                          style={{
+                            background: `color-mix(in srgb, ${color} 14%, transparent)`,
+                            color,
+                          }}
+                        >
+                          <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium text-fg">
+                            {label}
+                          </span>
+                          <span className="mt-1 block text-[13px] leading-relaxed text-muted">
+                            {body}
+                          </span>
+                        </span>
+                      </div>
+                    </Reveal>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Right column: the accordion and the answer-engine links. A
+                  plain div rather than a <Reveal>, so each child can reveal on
+                  its own timing. */}
+              <div className="min-w-0">
+                <Reveal delay={80}>
+                <div>
                 {/* Rendered from DOORWAY_FAQS in lib/faq.ts, which is also
                     what generates this page's FAQPage JSON-LD above. One array
                     for both, so the markup an answer engine reads and the copy
@@ -1061,14 +1207,14 @@ export default function Home() {
                     needed.
                   </p>
                 </FaqItem>
-              </div>
-            </Reveal>
+                </div>
+                </Reveal>
 
-            {/* In-body links to the two answer-engine pages. Without these they
-                are reachable only from the footer, which both readers and
-                link-graph analysis discount. */}
-            <Reveal delay={120}>
-              <p className="mt-8 text-center text-sm text-faint">
+                {/* In-body links to the two answer-engine pages. Without these
+                    they are reachable only from the footer, which both readers
+                    and link-graph analysis discount. */}
+                <Reveal delay={120}>
+                  <p className="mt-8 text-sm text-faint">
                 More answers on the{" "}
                 <Link
                   href={LINKS.faq.href}
@@ -1083,9 +1229,11 @@ export default function Home() {
                 >
                   glossary
                 </Link>
-                .
-              </p>
-            </Reveal>
+                    .
+                  </p>
+                </Reveal>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1093,6 +1241,42 @@ export default function Home() {
         <section className="relative overflow-hidden border-t border-line bg-surface">
           <div className="section-orbs" aria-hidden />
           <div className="relative mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
+            {/* The four pillars as chips, ABOVE the headline.
+
+                v3.0 specifies no image at the close, and it is right: anything
+                sitting near the button gives the eye a second place to stop.
+                But the section still needed something to look at, so the
+                graphic goes above the argument rather than beside the click
+                target, and it is a RECAP rather than a new idea - the same
+                four chips, in the same four colours, that the real assessment
+                shows on its own first screen. A visitor who arrives here from
+                a scroll sees what they are about to get, in one row. */}
+            <Reveal>
+              <ul className="mx-auto mb-10 flex list-none flex-wrap items-center justify-center gap-2">
+                {PILLAR_ORDER.map((key, i) => {
+                  const Icon = PILLAR_ICONS[key];
+                  const color = PILLAR_COLORS[key];
+                  return (
+                    <li key={key}>
+                      <span
+                        className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10.5px] uppercase tracking-[0.14em]"
+                        style={{
+                          borderColor: `color-mix(in srgb, ${color} 45%, transparent)`,
+                          background: `color-mix(in srgb, ${color} 9%, transparent)`,
+                          color,
+                          // Stagger via the existing rise-in, so the row
+                          // assembles left to right as it enters.
+                          ["--rise-delay" as string]: `${i * 90}ms`,
+                        }}
+                      >
+                        <Icon className="h-3 w-3" strokeWidth={2} aria-hidden />
+                        {PILLAR_LABELS[key].label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Reveal>
             <Reveal>
               <h2 className="text-display">
                 <WordReveal

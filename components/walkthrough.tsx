@@ -19,30 +19,42 @@
 // The crossfade and the step reveal are opacity/transform only, so the whole
 // thing stays on the compositor.
 //
-// NOTE ON THE SCREENS: these are RENDERED, not screenshotted. Every real
-// capture available in this repo is from the wrong vertical - see the long
-// explanation at the top of components/visuals/screens.tsx before replacing
-// them. The step copy also talks about what you do, never how many times you
-// do it, because the spec forbids publishing a question count or a duration
-// until either is measured.
+// THE SCREENS ARE REAL CAPTURES OF THE COACHES FUNNEL.
+//
+// They were taken from the live assessment at `vertical=coaches` - the exact
+// vertical `lp=coaches-consultants` resolves to - so what a visitor is shown
+// here is what they will actually see. That matters more than it sounds: the
+// four pillar names (Pattern Precision / Identity Distance / Evidence
+// Readiness / Cost Realism), their four colours, and the 59/100 sample score
+// all match this page's own report preview because both come from the same
+// source.
+//
+// This replaced an earlier set of captures from the main B2C funnel, which
+// rendered a different product ("Clarity Readiness Index") with a different
+// set of pillar names - two contradictory vocabularies on one page.
+//
+// Re-capturing: `scripts/` has no capture script here, because the funnel is a
+// separate repo. Run that app locally, seed localStorage["ufa-challenge"] with
+// a completed coaches session, and screenshot /challenge/audience?vertical=
+// coaches, /challenge/coaches/beat-1, /challenge/coaches/processing and
+// /challenge/coaches/summary. Seeding is what keeps it read-only: completing
+// the funnel for real writes a lead row to the production database and spends
+// LLM and speech credits.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import { MagneticButton } from "@/components/motion";
 import { ScorecardCta } from "@/components/scorecard-cta";
-import {
-  ScreenDecide,
-  ScreenEntry,
-  ScreenReflection,
-  ScreenScore,
-} from "@/components/visuals/screens";
 
 type Step = {
   n: string;
   title: string;
   meta: string;
-  /** The rendered screen for this step. */
-  Screen: () => React.ReactElement;
+  /** Real capture of this step, taken at desktop width. */
+  img: string;
+  /** The same step captured AT phone width. Not a crop of the desktop shot -
+   *  a separate capture, so the UI text stays readable at phone size. */
+  imgMobile: string;
   /** Announced to assistive tech when this step is the active one. */
   alt: string;
   /** What happens on this screen. */
@@ -56,8 +68,9 @@ const STEPS: ReadonlyArray<Step> = [
     n: "01",
     title: "Name one pattern",
     meta: "First screen",
-    Screen: ScreenEntry,
-    alt: "The opening screen: your name, your email, and the one recurring commercial moment you want to look at.",
+    img: "/graphics/coaches/coach-01-entry.jpg",
+    imgMobile: "/graphics/coaches/coach-01-entry-mobile.jpg",
+    alt: "The first screen of the Coaches and Consultants Belief Score: your name and email, the four pillars named, and one recurring business pattern to work from.",
     what: "Your details, and the one recurring commercial moment you want to examine.",
     why: "Not your whole business. One pattern, so the result is specific enough to act on.",
   },
@@ -65,28 +78,31 @@ const STEPS: ReadonlyArray<Step> = [
     n: "02",
     title: "Answer in your own words",
     meta: "Guided reflection",
-    Screen: ScreenReflection,
-    alt: "A guided reflection screen: an open question with the answer typed in plain language.",
-    what: "A short guided reflection. You type in plain language, and it reflects what you said back to you.",
+    img: "/graphics/coaches/coach-02-reflection.jpg",
+    imgMobile: "/graphics/coaches/coach-02-reflection-mobile.jpg",
+    alt: "A reflection screen reading your answer back to you: “What you described is not a discipline problem. It is a pattern with a shape.”",
+    what: "You type in plain language, and each answer is read back to you before the next one.",
     why: "No business jargon, no right answer. Messy answers are genuinely fine.",
   },
   {
     n: "03",
-    title: "Receive your Belief Score",
-    meta: "Instant",
-    Screen: ScreenScore,
-    alt: "The result: an overall score out of 100 with the four pillars scored beneath it.",
-    what: "Your score out of 100, four scored pillars, and the possible belief underneath the pattern.",
-    why: "A reading, not a label. It shows you which of the four is holding the most back.",
+    title: "Your score is built",
+    meta: "From your words",
+    img: "/graphics/coaches/coach-03-processing.jpg",
+    imgMobile: "/graphics/coaches/coach-03-processing-mobile.jpg",
+    alt: "The assessment assembling the result: the four pillars scoring one by one while the written plan is drafted alongside them.",
+    what: "The four pillars are scored from what you wrote, and the written plan is drafted alongside them.",
+    why: "Built from your answers, not selected from a set of pre-written profiles.",
   },
   {
     n: "04",
-    title: "Decide what fits",
+    title: "Receive it, and decide what fits",
     meta: "Yours to keep",
-    Screen: ScreenDecide,
-    alt: "The five fields of the Pattern-to-Belief Map, listed for you to accept, refine, or reject.",
-    what: "Keep what feels accurate. Question, refine, or reject what does not. You stay the authority on your own practice.",
-    why: "A hypothesis for reflection, not a verdict. Going deeper afterwards is optional and never assumed.",
+    img: "/graphics/coaches/coach-04-summary.jpg",
+    imgMobile: "/graphics/coaches/coach-04-summary-mobile.jpg",
+    alt: "The result screen: a Coaches and Consultants Belief Score of 59 out of 100 with the four pillars listed beneath it.",
+    what: "Your score out of 100, the four scored pillars, and the possible belief underneath the pattern.",
+    why: "Keep what fits. Question, refine, or reject what does not. You stay the authority on your own practice.",
   },
 ];
 
@@ -171,17 +187,18 @@ export function Walkthrough() {
             >
               aimerge.live / your-belief-score
             </span>
-            {/* Progress segments double as a step picker. aria-hidden and
-                tabIndex -1: the real, labelled control for choosing a step is
-                the tablist on the right, and exposing both would make a
-                keyboard user tab through the same four choices twice. */}
+            {/* Progress segments: a PURE INDICATOR, not a control.
+
+                They used to be <button>s, which made them 24x4px tap targets -
+                far under the 44px floor - duplicating choices the labelled
+                tablist on the right already offers. A second, tinier, unlabelled
+                copy of the same four options is worse than none: it fails the
+                target-size rule and gives a keyboard user two ways to do one
+                thing. Spans show progress; the tablist does the choosing. */}
             <div className="ml-auto flex items-center gap-1.5" aria-hidden>
               {STEPS.map((s, i) => (
-                <button
+                <span
                   key={s.n}
-                  type="button"
-                  tabIndex={-1}
-                  onClick={() => select(i)}
                   className="relative h-1 w-6 overflow-hidden rounded-full bg-fg/15 sm:w-8"
                 >
                   <span
@@ -196,7 +213,7 @@ export function Walkthrough() {
                         : undefined
                     }
                   />
-                </button>
+                </span>
               ))}
             </div>
           </div>
@@ -211,25 +228,54 @@ export function Walkthrough() {
             aria-labelledby={`wt-tab-${active}`}
             className="wt-stage relative w-full"
           >
-            {STEPS.map((s, i) => {
-              const Slide = s.Screen;
-              return (
-                <div
-                  key={s.n}
-                  aria-hidden={i !== active ? "true" : "false"}
-                  role="group"
-                  aria-label={i === active ? s.alt : undefined}
-                  // No `absolute inset-0`: the slides sit in one grid cell
-                  // (see .wt-stage), which is what lets the stage size itself
-                  // to the tallest slide instead of clipping it.
-                  className={`transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                    i === active ? "opacity-100" : "pointer-events-none opacity-0"
-                  }`}
-                >
-                  <Slide />
-                </div>
-              );
-            })}
+            {STEPS.map((s, i) => (
+              <div
+                key={s.n}
+                aria-hidden={i !== active ? "true" : "false"}
+                // Grid-cell stacking rather than `absolute inset-0`: every
+                // slide occupies the same cell (see .wt-stage), so the stage
+                // takes the height of the captures instead of a hard-coded
+                // ratio that could crop them.
+                className={`transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  i === active ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
+              >
+                {/* ART DIRECTION, not a resize.
+                
+                    <picture> rather than next/image because next/image cannot
+                    swap the SOURCE FILE at a breakpoint, and that is exactly
+                    what is needed: the desktop capture is 1280px of UI, and
+                    rendering it in a 350px phone column put its text at 2-3px -
+                    visible noise that communicates nothing. The phone loads a
+                    capture taken at phone width instead.
+
+                    <picture> also guarantees ONE fetch. Two next/image
+                    elements toggled with `hidden` would leave both in the DOM,
+                    and a display:none <img> is still fetched by every engine
+                    that matters - the phone would pay for the desktop file it
+                    never shows. Explicit width/height on the <img> reserves the
+                    box so a late-loading slide cannot shift the page. */}
+                <picture>
+                  <source
+                    media="(min-width: 640px)"
+                    srcSet={s.img}
+                    width={1920}
+                    height={1350}
+                  />
+                  <img
+                    src={s.imgMobile}
+                    // Only the visible slide carries its description; the three
+                    // hidden ones would otherwise all be announced at once.
+                    alt={i === active ? s.alt : ""}
+                    width={800}
+                    height={1520}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="block h-auto w-full"
+                  />
+                </picture>
+              </div>
+            ))}
             <span aria-hidden className="wt-vignette absolute inset-0" />
           </div>
         </div>
