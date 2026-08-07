@@ -77,10 +77,22 @@ export function SiteHeader() {
               // instead of clipping the pill against the right edge.
               className="min-w-0 !px-4 sm:!px-6"
             >
-              {/* One label per breakpoint. Both strings ship in the DOM, so the
-                  `hidden` one must not contribute width - `hidden` (not
-                  `sm:inline` alone) is what guarantees that. */}
-              <span className="hidden sm:inline">Free Belief Score</span>
+              {/* v3.0 Fix 08 standardises the CTA label to "Get My Free Belief
+                  Score" everywhere, so the header carries it in full from `sm`
+                  up rather than its own shorter wording.
+
+                  Phones keep "Free Score". This is the one deliberate
+                  exception: the header pill is a persistent nav affordance
+                  sitting beside the wordmark in a 320px row, and the full
+                  24-character label either clips there or squeezes the logo.
+                  The mobile visitor still gets the standardised label in full
+                  on the sticky bottom bar, which is the placement the fix
+                  actually names.
+
+                  Both strings ship in the DOM, so the hidden one must not
+                  contribute width - `hidden` (not `sm:inline` alone) is what
+                  guarantees that. */}
+              <span className="hidden sm:inline">Get My Free Belief Score</span>
               <span className="sm:hidden">Free Score</span>
             </ScorecardCta>
           </span>

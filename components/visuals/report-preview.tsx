@@ -1,0 +1,137 @@
+"use client";
+
+// A stylized page one of the report artifact: the product made visible.
+// Ported from the funnel's own `components/visuals/report-preview.tsx` so the
+// preview and the delivered report are recognisably the same document.
+//
+// Two honesty rules are enforced by the STRUCTURE here, not by good
+// intentions:
+//
+//  1. Narrative content renders as "redaction" bars, never as invented
+//     sentences. The written half cannot exist before the participant answers,
+//     and filling it with plausible prose would be fabricating a result. The
+//     bars are honest about being personalized while still showing the exact
+//     shape of what arrives.
+//  2. The numbers are illustrative, and the caller MUST caption them as such
+//     directly beneath the frame.
+
+import {
+  PILLAR_COLORS,
+  PILLAR_ICONS,
+  PILLAR_LABELS,
+  PILLAR_ORDER,
+  SAMPLE_SUBSCORES,
+  overallOf,
+  type PillarKey,
+} from "@/lib/pillars";
+import { ScoreRing } from "@/components/visuals/score-visuals";
+
+export function ReportPreviewCard({
+  subscores = SAMPLE_SUBSCORES,
+  animate = true,
+}: {
+  subscores?: Record<PillarKey, number>;
+  animate?: boolean;
+}) {
+  const overall = overallOf(subscores);
+
+  return (
+    <div className="bg-card p-5 sm:p-6">
+      {/* Document header.
+
+          The "Illustrative example" chip lives INSIDE the artifact, not only
+          in the caption underneath it. That is a compliance requirement, not a
+          design choice: the caption is a separate element that can be cropped
+          off in a screenshot, scrolled past, or dropped by a future call site,
+          and the numbers below are invented. Label travels with the thing it
+          labels. */}
+      <div className="mb-5 flex items-center justify-between gap-3 border-b border-line pb-4">
+        <span className="truncate text-[9px] uppercase tracking-[0.2em] text-faint">
+          Coaches and Consultants Belief Score
+        </span>
+        <span className="shrink-0 rounded-full border border-line px-2 py-0.5 text-[8.5px] uppercase tracking-[0.14em] text-faint">
+          Illustrative example
+        </span>
+      </div>
+
+      {/* Score hero row */}
+      <div className="flex items-center gap-5">
+        <ScoreRing
+          value={overall}
+          size={84}
+          stroke={7}
+          color="var(--signal)"
+          animate={animate}
+        >
+          <span className="font-serif text-[26px] leading-none tabular-nums text-fg">
+            {overall}
+          </span>
+        </ScoreRing>
+        <div className="min-w-0 flex-1">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-faint">
+            Your score · out of 100
+          </p>
+          {/* The personalized thesis sentence, abstracted to two ink bars. */}
+          <div className="mt-2.5 space-y-1.5" aria-hidden>
+            <div className="h-2 w-11/12 rounded-full bg-fg/25" />
+            <div className="h-2 w-7/12 rounded-full bg-fg/15" />
+          </div>
+        </div>
+      </div>
+
+      {/* The four scored dimensions. Icon chip, label, proportional bar, and
+          value: four encodings, only one of which is colour. */}
+      <div className="mt-6 space-y-3">
+        {PILLAR_ORDER.map((k) => {
+          const Icon = PILLAR_ICONS[k];
+          const color = PILLAR_COLORS[k];
+          const v = subscores[k];
+          return (
+            <div key={k} className="flex items-center gap-2.5">
+              <span
+                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: `color-mix(in srgb, ${color} 18%, transparent)`,
+                  color,
+                }}
+              >
+                <Icon className="h-2.5 w-2.5" strokeWidth={2} aria-hidden />
+              </span>
+              {/* w-28 at every width, and tighter tracking than the other
+                  eyebrows on the page. "PATTERN PRECISION" is 17 characters,
+                  and at w-24 with wider tracking it truncated to "PATTERN
+                  PRECIS…" on a 390px phone - a pillar name a visitor cannot
+                  read is worse than no pillar name. The bar flexes into
+                  whatever is left, and all four bars stay on one scale because
+                  they all flex identically. */}
+              <span className="w-28 shrink-0 truncate text-[9.5px] uppercase tracking-[0.04em] text-faint">
+                {PILLAR_LABELS[k].label}
+              </span>
+              <span className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-fg/10">
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{ width: `${v}%`, background: color }}
+                />
+              </span>
+              <span className="w-6 text-right font-serif text-[11px] tabular-nums text-fg">
+                {v}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* The written half, abstracted. */}
+      <div className="mt-6 space-y-1.5 border-t border-line pt-4" aria-hidden>
+        <div className="h-1.5 w-full rounded-full bg-fg/10" />
+        <div className="h-1.5 w-10/12 rounded-full bg-fg/10" />
+        <div className="h-1.5 w-11/12 rounded-full bg-fg/5" />
+        <div className="h-1.5 w-5/12 rounded-full bg-fg/5" />
+      </div>
+
+      <p className="mt-4 text-[9px] uppercase tracking-[0.16em] text-faint">
+        Built from your own words
+      </p>
+    </div>
+  );
+}

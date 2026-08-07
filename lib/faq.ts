@@ -38,11 +38,13 @@ export const toFaqEntries = (faqs: Faq[]) =>
   faqs.map((f) => ({ question: f.q, answer: f.a.join(" ") }));
 
 /**
- * The six questions rendered in the homepage "Essential Questions" accordion.
- * These are the categorical disclaimers, so their wording is deliberately
+ * The six categorical-disclaimer questions. Their wording is deliberately
  * conservative and is repeated verbatim on /faq: an assistant that finds two
  * different answers to "is this a business assessment" on one domain has to
  * pick one, and may pick the looser one.
+ *
+ * All six render on /faq. The DOORWAY page shows only the first three (see
+ * DOORWAY_FAQS below).
  */
 export const ESSENTIAL_FAQS: Faq[] = [
   {
@@ -87,6 +89,27 @@ export const ESSENTIAL_FAQS: Faq[] = [
       "Afterward, you may be offered an optional next step designed to help you work with the result more deliberately. The paid step is optional.",
     ],
   },
+];
+
+/**
+ * The three questions the DOORWAY page renders (v3.0 Block 09: "6 -> 3").
+ *
+ * These are the three a visitor actually hesitates on before starting: does it
+ * claim belief causes results, is it an evaluation of me, and is it really
+ * free. The other three are answered in the deep accordion beneath them or on
+ * /faq, so nothing is lost - it is scroll cost that is removed, at the point
+ * in the page where a reader is closest to clicking.
+ *
+ * Selected BY INDEX from ESSENTIAL_FAQS rather than re-declared, because the
+ * homepage's FAQPage JSON-LD is generated from whatever this array holds. If
+ * the two were separate literals they would drift, and the markup an answer
+ * engine reads would stop matching the copy a visitor sees - which is the one
+ * FAQ rule this repo cannot break.
+ */
+export const DOORWAY_FAQS: Faq[] = [
+  ESSENTIAL_FAQS[0], // belief does not cause business results
+  ESSENTIAL_FAQS[1], // not a business assessment or evaluation
+  ESSENTIAL_FAQS[5], // the complete score is genuinely free
 ];
 
 /**

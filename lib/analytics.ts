@@ -8,21 +8,23 @@ import { trackCustom } from "./fbpixel";
 import { LP_SLUG } from "./scorecard";
 
 /**
- * CTA placements the doc requires distinct tracking for. These are the exact
- * CTA TRACKING LOCATIONS listed in COACH-CONSULTANT-Landing-Page.md:
- * hero, recognition, score_definition, sample_result, how_it_works, final,
- * mobile_sticky. `header` and `what_you_get` are additional placements this
- * build ships (the sticky header CTA and the Block 02 early-proof strip).
+ * CTA placements we track separately.
+ *
+ * This list tracks the PAGE, not the spec's original block numbering. The v3.0
+ * rebuild collapsed thirteen sections into six, so `score_definition` and
+ * `sample_result` (the old Block 06 spine and Block 07 example result) are
+ * gone, and the Block 02 CTA is named `early_proof` per v3.0 Fix 02.
+ *
+ * Keep this union tight: a location that no longer exists on the page still
+ * type-checks forever and quietly becomes a dead series in the funnel report.
  */
 export type CtaLocation =
   | "header"
   | "hero"
-  | "what_you_get"
+  // v3.0 Fix 02: the CTA at the end of "what you get". The live page showed
+  // the sample map and then asked for nothing for another 795 words.
+  | "early_proof"
   | "recognition"
-  // Block 06, the Pattern-to-Belief Map (the named public mechanism).
-  | "score_definition"
-  // Block 07, the illustrative example result.
-  | "sample_result"
   | "how_it_works"
   | "final"
   | "mobile_sticky"

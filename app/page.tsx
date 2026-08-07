@@ -1,21 +1,17 @@
 import Image from "next/image";
+import Link from "next/link";
+import ReactDOM from "react-dom";
 import {
-  ArrowRight,
   ArrowUpRight,
   Award,
   Building2,
-  FileText,
   Eye,
+  FileText,
   MessageSquareQuote,
   RefreshCw,
-  PenLine,
   Repeat,
-  ScrollText,
   Sparkles,
-  Target,
 } from "lucide-react";
-import Link from "next/link";
-import ReactDOM from "react-dom";
 import { FaqItem } from "@/components/faq-item";
 import { LandingAnalytics } from "@/components/landing-analytics";
 import { MobileStickyCta } from "@/components/mobile-sticky-cta";
@@ -30,42 +26,66 @@ import {
   publicationNode,
   videoNode,
 } from "@/components/structured-data";
-import { TestimonialReel } from "@/components/testimonial-reel";
 import { VslPlayer } from "@/components/vsl-player";
+import { Walkthrough } from "@/components/walkthrough";
+import { LetterReveal, MagneticButton, WordReveal } from "@/components/motion";
+import { DeviceFrame } from "@/components/visuals/device-frame";
+import { ReportPreviewCard } from "@/components/visuals/report-preview";
+import { PillarDial } from "@/components/visuals/score-visuals";
+import { PILLAR_ORDER, SAMPLE_SUBSCORES } from "@/lib/pillars";
 import type { CtaLocation } from "@/lib/analytics";
-import { ESSENTIAL_FAQS, toFaqEntries } from "@/lib/faq";
+import { DOORWAY_FAQS, toFaqEntries } from "@/lib/faq";
 import { LINKS } from "@/lib/seo";
 import { ROUTES } from "@/lib/site";
 
 /* ==========================================================================
    AI Merge, Coaches and Consultants Belief Score doorway page.
 
-   Marine design system (deep navy ground + one teal accent,
-   Fraunces display + Inter, ambient lighting, VSL player). Structure and copy
-   follow the authoritative spec `COACH-CONSULTANT-Landing-Page.md` block by
-   block (Blocks 01-14). Block numbers appear only in comments, never on the
-   page.
+   Marine design system: deep navy ground, one teal accent, and the FOUR
+   pillar colours the assessment itself scores with. Fraunces display + Inter,
+   ambient lighting, VSL player.
 
-   Register (from the spec):
+   ---------------------------------------------------------------------------
+   STRUCTURE NOTE - read this before adding a section back.
+
+   Earlier revisions rendered the spec's Blocks 01-14 one-to-one, which put
+   thirteen argument sections and several thousand words on a doorway page
+   whose only job is one free assessment. The owners' review was blunt: too
+   much text, too much of it explaining AI Merge rather than the score, and
+   too little to actually look at.
+
+   So this page no longer maps one section per spec block. It keeps every
+   BINDING element - the single offer, the single CTA, the Pattern-to-Belief
+   Map as the named mechanism, the participant's authority over their own
+   result, and every categorical disclaimer (consolidated into the Essential
+   Questions accordion) - and drops the argumentative middle: the skepticism
+   rebuttal, the "why now" essay, the five-stage spine, the process
+   demonstration, the identity-transition section, and the ten-row
+   differentiation table. The reinforcing-loop diagram is gone as well.
+
+   What replaced them is the product, shown: the report artifact, the four
+   scored pillars in their own colours, and a walkthrough of every screen a
+   visitor will see. Show-don't-tell is also, conveniently, far fewer words.
+
+   Register (unchanged, all still binding):
    - The free "Coaches and Consultants Belief Score" is the ONLY primary offer.
      Its public mechanism is the "Pattern-to-Belief Map." One CTA everywhere.
    - ONE dominant commercial pattern carries the page: creating more value when
      the business needs a direct invitation.
-   - Belief is never presented as the sole cause of commercial outcomes.
-     Practical business conditions (demand, offer, pricing, proof, distribution,
-     timing, capital) stay explicitly real.
+   - Belief is never presented as the sole cause of a commercial outcome.
    - AI is supporting technology, not the authority. The participant decides
      what fits.
    - Not a business assessment, personality test, or professional evaluation.
    - No urgency, no scarcity, no guaranteed client or revenue outcome.
-   - Question count and completion time are NOT published (the spec forbids it
-     until verified / measured).
+   - Question count and completion time are NOT published (the spec forbids
+     both until measured). No capture of the question screen appears anywhere,
+     because that screen renders a question counter.
    - "TODO(launch)" markers keep the spec's verification-register items as
      honest placeholders rather than invented specifics.
 ========================================================================== */
 
-/* Prior professional work behind AI Merge, pedigree, not endorsement (the
-   disclaimer below the row states this). Verify approved monochrome assets. */
+/* Prior professional work behind AI Merge: pedigree, not endorsement (the
+   disclaimer under the row says so). Verify approved monochrome assets. */
 const TRUST_LOGOS = [
   { src: "/logos/ibm.png", alt: "IBM" },
   { src: "/logos/microsoft.png", alt: "Microsoft" },
@@ -80,350 +100,89 @@ const HERO_CRED_CHIPS = [
   "Founder & CIO, TetraNoodle Technologies",
 ];
 
-/* Blocks 06 / 12 / 13: the five fields a Pattern-to-Belief Map produces. The
-   spec repeats this list at each decision point, so it is declared once. */
+/* The five fields a Pattern-to-Belief Map produces: the WRITTEN half of the
+   result, as distinct from the four scored pillars. Both are real and they are
+   not the same thing, so the page gives them two different visual systems -
+   the pillars own the colour, these ride on the single accent.
+
+   v3.0 replaced the DEFINITIONS here with a WORKED EXAMPLE, verbatim from the
+   spec's illustrative card. A definition ("what that repeated experience may
+   have taught you to conclude") describes the field; the example ("Helping
+   preserves trust. Selling risks damaging it.") lets a reader recognise
+   themselves in it, which is the only thing that makes a free assessment feel
+   worth ten minutes. It is labelled illustrative wherever it renders, and the
+   line beneath says the reader's own result is built from their words. */
 const MAP_FIELDS = [
   {
     title: "The repeated moment",
-    body: "The specific situation that keeps recurring, stated concretely rather than as a general complaint.",
+    body: "When a client is ready for a clear recommendation, more value is added instead of naming the next step.",
   },
   {
     title: "A possible belief",
-    body: "What that repeated experience may have taught you to conclude. An interpretation, not a verdict.",
+    body: "“Helping preserves trust. Selling risks damaging it.”",
   },
   {
     title: "The reinforcing loop",
-    body: "How your response produces a consequence that appears to confirm the belief, so it repeats.",
+    body: "More value added → next step unclear → prospect delays → pipeline weakens → selling feels heavier.",
   },
   {
     title: "The moment to watch",
-    body: "The earliest observable point where the pattern begins, narrow enough to actually catch.",
+    body: "The urge to add more before stating the recommendation.",
   },
   {
     title: "The next evidence",
-    body: "One small action that would show another response is available. A test you can run this week.",
+    body: "One conversation ended with a clear recommendation and a decision point.",
   },
 ];
 
-/** One icon per Map field, in the same order. Line icons only: the page's
- *  visual language is hairlines and restraint, so filled or duotone marks
- *  would read as a different system. */
 const MAP_FIELD_ICONS = [Repeat, MessageSquareQuote, RefreshCw, Eye, ArrowUpRight];
 
-/* Block 03: what the score explicitly does NOT replace. Naming these keeps the
-   page from claiming belief work substitutes for commercial fundamentals. */
-const NOT_A_REPLACEMENT_FOR = [
-  "market research",
-  "offer design",
-  "sales skill",
-  "positioning",
-  "pricing strategy",
-  "proof",
-  "distribution",
-  "referrals",
-  "content strategy",
-  "financial discipline",
-  "legal or professional advice",
-  "direct market evidence",
-];
-
-/* Block 04: the dominant pattern, told as three stages. The spec's copy runs as
-   a long single-line cadence; these cards keep that sequence readable without
-   turning it into a wall of one-liners. */
+/* The dominant pattern, told as three stages. This is the ONE recognition
+   sequence the page keeps: creating more value when the business needs a
+   direct invitation. */
 const RECOGNITION_ACTS = [
   {
-    label: "The Work Is Valuable",
+    label: "The work is valuable",
     lead: "The discovery call went well. They can see the transformation. The next step is available.",
     body: "The client results are real. The framework has depth. The proposal is nearly ready. Then something changes.",
   },
   {
-    label: "One More Pass",
-    lead: "“It needs one more pass.” Or: “I should give them more context first.” Or: “I do not want this to feel salesy.”",
-    body: "One more clarification appears necessary. One more resource would make the offer stronger. One more custom element could show how much you care.",
+    label: "One more pass",
+    lead: "“It needs one more pass.” Or: “I should give them more context first.” Or: “I don’t want this to feel salesy.”",
+    body: "One more clarification seems necessary. One more resource would make the offer stronger. One more custom element could show how much you care.",
   },
   {
-    label: "The Cycle Stays Open",
-    lead: "So you return to the place where you already feel capable. You help. You teach. You improve. You customize.",
-    body: "The work remains alive. But the commercial cycle stays incomplete. The recommendation is softened. The next step is vague. The proposal waits.",
+    label: "The cycle stays open",
+    lead: "So you return to the place where you already feel capable. You help. You teach. You customize.",
+    body: "The work stays alive. But the commercial cycle stays incomplete: the recommendation softens, the next step goes vague, the proposal waits.",
   },
 ];
 
-/* Block 04: what the incomplete commercial cycle quietly costs. */
-const RECOGNITION_CONSEQUENCES = [
-  "the recommendation is softened",
-  "the next step is vague",
-  "the proposal waits",
-  "the price is qualified before the prospect responds",
-  "the content educates without inviting",
-  "delivery becomes more dependent on you",
-];
+/* The possible beliefs underneath the pattern. The spec's verbatim
+   quotations, always framed as "may sound like".
 
-/* Block 04: the loop, rendered as a visible chain so "it keeps repeating"
-   lands visually rather than as prose. */
-const RECOGNITION_LOOP = [
-  "pipeline becomes quiet",
-  "revenue pressure rises",
-  "selling becomes urgent",
-  "the next conversation carries more weight",
-  "action finally arrives under pressure",
-  "pressure receives the credit",
-];
-
-/* Block 04: the possible beliefs underneath the pattern. Kept as the spec's
-   verbatim quotations, each explicitly framed as "may sound like". */
+   v3.0 cut these from four to two. Past the second quote the section was
+   restating rather than building, and a reader who recognises themselves does
+   it on the first or second line - the third and fourth only add scroll. */
 const POSSIBLE_BELIEFS = [
   "Helping preserves trust. Selling risks damaging it.",
-  "If I simplify the work, I reduce its value.",
   "Receiving more requires giving more first.",
-  "If the client can succeed without my constant presence, perhaps I am less valuable.",
 ];
 
-/* Block 05: the moments that look unrelated until the language, sequence,
-   response, consequence, and interpretation are viewed together. */
-const SEPARATE_PATTERNS = [
-  { a: "A delayed proposal", b: "an overcustomized engagement" },
-  { a: "A soft follow-up", b: "vague pricing" },
-  { a: "A full content calendar", b: "weak commercial visibility" },
-  { a: "A new AI experiment", b: "difficulty simplifying delivery" },
-  { a: "An inability to delegate", b: "the way value is defined" },
-];
-
-/* Block 05: what the technology helps reflect. Not what it decides. */
-const WHAT_IT_REFLECTS = [
-  "what keeps happening",
-  "what happens immediately before it",
-  "what you tend to do next",
-  "what consequence follows",
-  "what the repeated moment may have come to mean",
-  "where a different piece of evidence could begin",
-];
-
-/* Block 06: the Pattern-to-Belief Map, the public mechanism. Five connected
-   stages (spec Block 06). */
-const MAP_STAGES = [
-  {
-    title: "The Repeated Moment",
-    body: (
-      <>
-        <p>What keeps happening? Not:</p>
-        <blockquote>&ldquo;I need more clients.&rdquo;</blockquote>
-        <p>Something specific:</p>
-        <blockquote>
-          &ldquo;When a prospect is ready for a clear recommendation, I add more
-          value instead of naming the next step.&rdquo;
-        </blockquote>
-      </>
-    ),
-  },
-  {
-    title: "The Possible Belief",
-    body: (
-      <>
-        <p>What may the repeated experience have taught you to conclude?</p>
-        <blockquote>
-          &ldquo;Direct selling makes the relationship less genuine.&rdquo;
-        </blockquote>
-        <blockquote>
-          &ldquo;My value depends on giving more than the client expects.&rdquo;
-        </blockquote>
-        <p>A possible interpretation. Not a verdict.</p>
-      </>
-    ),
-  },
-  {
-    title: "The Reinforcing Loop",
-    body: (
-      <>
-        <p>How does the sequence keep appearing to prove the same belief?</p>
-        <p>
-          Prospect shows interest &rarr; a direct recommendation becomes
-          available &rarr; more explanation or customization is added &rarr; the
-          next step remains unclear &rarr; the prospect delays &rarr; the
-          pipeline weakens &rarr; pressure rises &rarr; selling feels heavier.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "The Moment to Watch",
-    body: (
-      <>
-        <p>Where does the familiar pattern begin?</p>
-        <p>
-          Not the whole business. Not every sales conversation. One early
-          moment.
-        </p>
-        <blockquote>
-          The urge to add more before stating the recommendation.
-        </blockquote>
-      </>
-    ),
-  },
-  {
-    title: "The Next Evidence",
-    body: (
-      <>
-        <p>What observable action would suggest another response is available?</p>
-        <blockquote>
-          End one qualified conversation with a clear recommendation, decision
-          point, and agreed follow-up date.
-        </blockquote>
-      </>
-    ),
-  },
-];
-
-/* Block 07: participant language becomes the map, step by step. */
-const PROCESS_STEPS = [
-  {
-    title: "Your Words",
-    body: (
-      <blockquote>
-        &ldquo;The sales conversation goes well, but when it is time to
-        recommend the offer, I start explaining more, adding options, or giving
-        away extra help.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    title: "The Repeated Moment",
-    body: (
-      <p>
-        A qualified prospect is ready for a clear commercial recommendation.
-        Instead, additional explanation or value is introduced.
-      </p>
-    ),
-  },
-  {
-    title: "A Possible Belief",
-    body: (
-      <blockquote>
-        &ldquo;If I sell directly, the relationship becomes less genuine.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    title: "The Reinforcing Loop",
-    body: (
-      <p>
-        A direct recommendation feels exposed. More value is added. The next
-        step becomes less clear. The prospect delays. The pipeline weakens.
-        Pressure rises. Selling feels heavier next time.
-      </p>
-    ),
-  },
-  {
-    title: "The Moment to Watch",
-    body: (
-      <p>
-        The first urge to add another explanation, resource, or option before
-        naming the recommendation.
-      </p>
-    ),
-  },
-  {
-    title: "The Next Evidence",
-    body: (
-      <p>
-        State the recommendation clearly and let the prospect make a real
-        decision.
-      </p>
-    ),
-  },
-];
-
-/* Block 07: the illustrative result panel, shaped like a product result.
-   Copy is the spec's worked coaching / consulting example. */
-const EXAMPLE_RESULT = [
-  {
-    label: "Your Recurring Pattern",
-    body: (
-      <p>
-        When a prospect is ready for a direct next step, you move back into
-        teaching, explaining, or customizing.
-      </p>
-    ),
-  },
-  {
-    label: "A Possible Belief Underneath",
-    body: (
-      <blockquote className="text-title">
-        &ldquo;Helping protects trust. Selling risks changing the
-        relationship.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    label: "How the Pattern May Keep Proving Itself",
-    body: (
-      <p>
-        A strong conversation creates interest. A recommendation becomes
-        available. The commercial moment feels exposed. You add more
-        explanation. You make the offer broader. You give another resource. The
-        next step remains unclear. The prospect delays. The pipeline becomes
-        quieter. Financial pressure increases. The next conversation feels more
-        urgent. The mind records: &ldquo;Selling naturally becomes
-        heavy.&rdquo;
-      </p>
-    ),
-  },
-  {
-    label: "The Moment to Watch",
-    body: (
-      <p>
-        The first moment you feel pulled to add more before making the
-        recommendation.
-      </p>
-    ),
-  },
-  {
-    label: "What Different Evidence Could Look Like",
-    body: (
-      <p>
-        State one clear recommendation. Name the next step. Ask whether the
-        prospect wants to proceed. Allow care and commercial clarity to exist in
-        the same interaction.
-      </p>
-    ),
-  },
-  {
-    label: "One Practical Next Step",
-    body: (
-      <p>
-        Before the next qualified conversation, write the exact recommendation
-        you would make if directness and care were allowed to coexist.
-      </p>
-    ),
-  },
-];
-
-/* Block 08: what a different response may look like. Behavioral and specific,
-   never a promise of transformation. */
-const FIRST_SHIFTS = [
-  "You make the recommendation before adding another resource.",
-  "You name the price without apologizing for it.",
-  "You publish content that includes a clear invitation.",
-  "You let one offer remain stable long enough to see who actually enrols.",
-  "You distinguish client value from unlimited access to you.",
-  "You define one repeatable delivery component without removing judgment.",
-  "You use AI for one measured workflow instead of endless experimentation.",
-  "You delegate with clear standards and allow the task to remain with its owner.",
-];
-
-/* Block 09: compact credential list. TODO(launch): verify exact approved
-   wording for title, patents, and publication. */
+/* TODO(launch): verify exact approved wording for title, patents, and
+   publication before this ships. */
 const CREDENTIALS = [
   { label: "Role", value: "Founder & CIO, TetraNoodle Technologies" },
-  { label: "Created", value: "The AI Merge methodology" },
-  { label: "Patents", value: "Four, in AI and technology systems" },
-  { label: "Published in", value: "Mensa Research Journal" },
+  { label: "Patents", value: "Four, in human-AI decision systems" },
+  { label: "Published", value: "Mensa Research Journal" },
+  { label: "Built", value: "The AI Merge methodology" },
 ];
 
-/** One icon per credential, in order. */
-const CREDENTIAL_ICONS = [Building2, Sparkles, Award, FileText];
+const CREDENTIAL_ICONS = [Building2, Award, FileText, Sparkles];
 
-/* Block 10: approved participant statements. TODO(launch): verify exact
-   wording, consent, role, and display restrictions before publishing. */
+/* TODO(launch): verify exact wording, name or approved anonymity,
+   professional role, program referenced, written consent, and display
+   restrictions for each statement below. */
 const TESTIMONIALS = [
   {
     quote: "There's a stress part of my brain that has gone silent.",
@@ -438,157 +197,88 @@ const TESTIMONIALS = [
   },
 ];
 
-/* Block 11: the differentiation table. Left column = legitimate existing
-   support (explicitly kept), right column = the additional layer the score
-   examines. Renders as a table from md up, stacked cards on mobile (the
-   spec's mobile requirement, so nothing scrolls horizontally). */
-const DIFFERENTIATION = [
-  {
-    support: "Offer strategy",
-    examines: "Why the offer keeps changing before the market can answer",
-  },
-  {
-    support: "Sales training",
-    examines:
-      "Why a direct recommendation may feel less human than continued helping",
-  },
-  {
-    support: "CRM and follow-up systems",
-    examines: "Why the message remains unsent even when the task is visible",
-  },
-  {
-    support: "Content systems",
-    examines: "Why useful education may remain commercially indirect",
-  },
-  {
-    support: "Pricing guidance",
-    examines:
-      "Why receiving fair value may trigger more giving or qualification",
-  },
-  {
-    support: "AI tools",
-    examines: "Why experimentation may replace one measured implementation",
-  },
-  {
-    support: "Productization",
-    examines: "Why repeatability may feel like loss of nuance or identity",
-  },
-  {
-    support: "Delegation systems",
-    examines: "Why the first imperfect version triggers reclamation",
-  },
-  {
-    support: "Business coaching",
-    examines: "The possible belief active inside one repeated business moment",
-  },
-  {
-    support: "Professional supervision",
-    examines:
-      "Quality and ethics within the work, rather than the commercial identity attached to the work",
-  },
-];
-
-/* Block 12, step 1: the example patterns a visitor may choose from. This is
-   the public distillation of the ICP matrix, and it is what keeps the page
-   coherent for every approved ad angle (ad-to-page continuity). */
-const EXAMPLE_PATTERNS = [
-  "building instead of selling",
-  "softening the recommendation",
-  "overcustomizing delivery",
-  "avoiding follow-up",
-  "changing positioning too quickly",
-  "hiding the invitation inside educational content",
-  "underpricing",
-  "overdelivering",
-  "struggling to delegate",
-  "experimenting with AI without integration",
-  "remaining indispensable to every result",
-];
-
-/* Block 12: the four process steps. */
-/** One icon per step. The NUMBER stays: unlike the Block 08 options, these
- *  four genuinely run in order, so the sequence is real information. The icon
- *  carries the character of the step, the number carries its place. */
-const HOW_STEP_ICONS = [Target, PenLine, ScrollText, Sparkles];
-
-const HOW_STEPS = [
-  {
-    title: "Choose One Pattern",
-    body: "Focus on one situation in your practice that matters now, not your entire business. One pattern.",
-  },
-  {
-    title: "Describe What Happens",
-    body: "Complete a short guided reflection in your own words. You do not need business jargon. There is no perfect wording. Messy answers are allowed.",
-  },
-  {
-    title: "Receive Your Pattern-to-Belief Map",
-    body: "Your personalized result shows the repeated moment, a possible belief, the reinforcing loop, the moment to watch, and the next evidence.",
-  },
-  {
-    title: "Decide What Fits",
-    body: "Keep what feels accurate. Question, correct, refine, or reject what does not. You remain the authority on your business and experience.",
-  },
-];
-
 /* Zone A microcopy. The words under every primary CTA carry the artifact spec
    (free, personalized, no card, reflective), never a caveat. The categorical
-   disclaimers live in the FAQ. */
+   disclaimers live in the Essential Questions accordion. */
 const CTA_MICROCOPY =
   "Free · Personalized · No credit card · Reflective, not diagnostic";
 
-/* Full label on tablet/desktop; a shorter label on phones so the pill never
-   forces horizontal overflow and stays a comfortable tap target. */
-const CTA_LABEL = "Get Your Free Coaches and Consultants Belief Score";
-const CTA_LABEL_SHORT = "Get Your Free Belief Score";
+/* v3.0 Fix 08: ONE label, everywhere, including the mobile sticky bar. The
+   page previously ran three different labels ("Get Your Free Coaches and
+   Consultants Belief Score", a shortened phone variant, and "Start step one"),
+   which reads as three different offers and makes cta_click impossible to
+   compare across placements. There is no long/short split any more: at eight
+   words the label wraps to three lines at 320px and stays legible. */
+const CTA_LABEL = "Get My Free Belief Score";
 
+/** Section chapter mark. The roman numeral is the page's editorial signature
+ *  and it orients a visitor who arrives mid-page from an ad. Decorative to
+ *  assistive tech, since the heading beneath carries the meaning. */
 function ChapterMark({
+  numeral,
   children,
+  animate = false,
   className = "",
 }: {
-  children: React.ReactNode;
+  numeral?: string;
+  children: string;
+  animate?: boolean;
   className?: string;
 }) {
   return (
     <p className={`chapter text-eyebrow ${className}`}>
       <span className="chapter-dot" aria-hidden />
-      <span>{children}</span>
+      {numeral && (
+        <span className="text-faint" aria-hidden>
+          {numeral} ·
+        </span>
+      )}
+      <span>{animate ? <LetterReveal text={children} /> : children}</span>
     </p>
   );
 }
 
-/** Primary CTA + the reassurance line beneath it. Renders a short label on
- *  phones and the full label from the `sm` breakpoint up. Pass an explicit
- *  `label` to override both. */
+/** Primary CTA + the reassurance line beneath it. */
 function CtaBlock({
   location,
-  label,
-  labelShort,
   microcopy = CTA_MICROCOPY,
+  align = "center",
   className = "",
 }: {
   location: CtaLocation;
-  label?: string;
-  labelShort?: string;
   microcopy?: string;
+  align?: "center" | "start";
   className?: string;
 }) {
-  const full = label ?? CTA_LABEL;
-  const short = labelShort ?? (label ? label : CTA_LABEL_SHORT);
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
-      {/* Wrapper hosts the ambient light behind the button, see .cta-halo. */}
-      <span className="cta-halo w-full sm:w-auto">
-        <ScorecardCta
-          variant="signal"
-          size="lg"
-          location={location}
-          className="w-full min-h-11 sm:w-auto"
-        >
-          <span className="sm:hidden">{short}</span>
-          <span className="hidden sm:inline">{full}</span>
-        </ScorecardCta>
-      </span>
-      <p className="text-center text-sm text-faint">{microcopy}</p>
+    <div
+      className={`flex flex-col gap-4 ${
+        align === "center" ? "items-center" : "items-start"
+      } ${className}`}
+    >
+      {/* Two nested wrappers, each with one job. MagneticButton owns the
+          transform that pulls the pill toward the cursor; .cta-halo owns the
+          light behind it. They cannot be merged: the halo is a z-index:-1
+          pseudo-element, and a transform on the same element would make it a
+          stacking context, flipping the halo to paint ON TOP of the button
+          and washing its face teal. */}
+      <MagneticButton className="w-full sm:w-auto">
+        <span className="cta-halo w-full sm:w-auto">
+          <ScorecardCta
+            variant="signal"
+            size="lg"
+            location={location}
+            className="w-full min-h-11 sm:w-auto"
+          >
+            {CTA_LABEL}
+          </ScorecardCta>
+        </span>
+      </MagneticButton>
+      <p
+        className={`text-sm text-faint ${align === "center" ? "text-center" : ""}`}
+      >
+        {microcopy}
+      </p>
     </div>
   );
 }
@@ -617,54 +307,80 @@ export default function Home() {
           the same lib/faq.ts array the accordion below renders, so the markup
           and the visible copy cannot drift apart.
 
-          `speakable` points at the hero headline and the what-you-receive
-          block: the passages written to be read aloud verbatim. */}
+          howToNode's four steps ARE the walkthrough's four steps. Edit one and
+          you must edit the other, or the page and its structured data will
+          describe two different products. */}
       <PageStructuredData
         name="Free Coaches and Consultants Belief Score"
         path={ROUTES.home.path}
         description="See the belief that may be shaping one repeated commercial moment, built from your own words. Free, personalized, and reflective rather than diagnostic."
         updated={ROUTES.home.updated}
-        faqs={toFaqEntries(ESSENTIAL_FAQS)}
+        faqs={toFaqEntries(DOORWAY_FAQS)}
         speakableSelectors={["#hero-headline", "#what-you-receive"]}
         extraNodes={[videoNode, howToNode, publicationNode]}
       />
       <LandingAnalytics />
       <main id="main" className="relative flex-1">
-        {/* ================= Block 01 · Hero =================
+        {/* The ambient lighting layers. globals.css defines a three-part system
+            - a document-anchored field, a hero spotlight, and a
+            viewport-anchored vignette plus key light. Each is decorative,
+            pointer-events-none and painted at z-index -1, so none of it can
+            intercept a click or shift a pixel of layout. */}
+        <div className="ambient-field" aria-hidden />
+        <div className="page-vignette" aria-hidden />
+
+        {/* ===================== Hero =====================
             Spec order: eyebrow, headline, VSL, CTA, trust line, credibility
             line. NO supporting paragraph between headline, VSL, and CTA. */}
         <section id="hero" className="relative overflow-hidden">
+          <div className="spotlight-hero" aria-hidden />
+
+          {/* Everything above the fold uses `immediate`, so it renders visible
+              in the first HTML and animates via CSS instead of waiting for an
+              IntersectionObserver. <Reveal> holds children at opacity 0 until
+              hydration, which would both blank the headline for its entire
+              word-by-word compose AND charge that animation to LCP, since a
+              transparent element does not count as painted. */}
           <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-10 pt-12 text-center sm:px-8 sm:pt-16">
-            <Reveal>
+            <Reveal immediate>
               <p className="cred-chip">
+                <span className="pulse-dot" aria-hidden />
                 AI Merge · Free Coaches and Consultants Belief Score
               </p>
             </Reveal>
-            <Reveal delay={80}>
-              {/* The audience is named IN the headline, not in a line under it:
-                  Block 01's "DO NOT ADD" list forbids a supporting paragraph
-                  between the headline, the VSL and the CTA, so a separate
-                  "for coaches and consultants" line would breach the spec.
-                  Working it into the H1 satisfies the owners' note (the page
-                  must address coaches and consultants) while keeping the
-                  above-the-fold order intact.
+            <Reveal immediate>
+              {/* v3.0 Fix 07: H1 and subhead are SEPARATE elements.
+                  Previously both clauses sat inside one run-on <h1>, which
+                  gave the page a 21-word heading - bad for the skim test, bad
+                  for the SERP snippet, and it flattened the turn between the
+                  statement and the question into a font-style change.
 
-                  The phrasing is the ICP matrix's own governing position:
-                  "A coach or consultant who knows how to create value for other
-                  people but does not consistently make that value visible,
-                  sellable, scalable, or receivable." */}
-              {/* Same two-clause structure and cadence as before - a statement
-                  of competence, then the narrower question in italic emphasis.
-                  Only the vocabulary moves: "create value / sellable /
-                  scalable" was true of any business, so it becomes the language
-                  of the work itself (transformation, clients, expertise). */}
+                  This supersedes v2.1's "DO NOT ADD a supporting paragraph
+                  between headline, VSL and CTA": v3.0 specifies the subhead
+                  explicitly. It is the second half of one sentence, not new
+                  supporting copy, so the fold still carries exactly one idea. */}
               <h1 id="hero-headline" className="text-display mt-8">
-                Coaches and consultants: you know how to create value.{" "}
-                <span className="text-emphasis">
-                  But what belief decides whether that value gets sold,
-                  received, and scaled?
-                </span>
+                <WordReveal
+                  step={70}
+                  segments={[
+                    {
+                      kind: "text",
+                      text: "Coaches and consultants: you know how to create value.",
+                    },
+                  ]}
+                />
               </h1>
+            </Reveal>
+            <Reveal immediate>
+              {/* Delayed past the H1's last word (9 words x 70ms + 300ms) so
+                  the two clauses arrive in reading order rather than racing. */}
+              <p
+                className="text-emphasis rise-in mt-5 max-w-2xl text-2xl leading-snug sm:text-3xl"
+                style={{ "--rise-delay": "930ms" } as React.CSSProperties}
+              >
+                But what belief decides whether that value gets sold, received,
+                and scaled?
+              </p>
             </Reveal>
           </div>
 
@@ -673,20 +389,9 @@ export default function Home() {
               <VslPlayer />
             </Reveal>
             <Reveal delay={220}>
-              {/* Hero CTA shows the full label on every breakpoint (no mobile
-                  shortening); the button wraps to two lines on narrow screens. */}
-              <CtaBlock
-                location="hero"
-                label={CTA_LABEL}
-                labelShort={CTA_LABEL}
-                className="mt-8"
-              />
-            </Reveal>
-            <Reveal delay={280}>
-              <p className="mt-3 text-center text-sm text-faint">
-                Built from your own words · Based on the published AI Merge
-                methodology
-              </p>
+              {/* Hero CTA shows the full label at every breakpoint; the button
+                  wraps to two lines on narrow screens rather than shortening. */}
+              <CtaBlock location="hero" className="mt-8" />
             </Reveal>
           </div>
 
@@ -701,219 +406,220 @@ export default function Home() {
           </Reveal>
         </section>
 
-        {/* ================= Block 02 · Early proof =================
-            Product credibility before the visitor absorbs the full argument:
-            the five Map fields on the left, an on-brand result card on the
-            right. bg-surface so it alternates against the hero and Block 03. */}
+        {/* =============== I · What you receive ===============
+            The artifact, shown. This is the section the page turns on: a
+            stranger ten seconds in has to be able to say what they physically
+            get. Spec column left, product right. */}
         <section className="relative overflow-hidden border-y border-line bg-surface">
           <div className="section-orbs" aria-hidden />
           <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-24">
             <SectionViewTracker event="whatyouget_view" />
-            {/* Centred header, then the REAL score report full-bleed, then the
-                five fields as icon cards. Previously this block led with a
-                paragraph and a bullet list beside a coded card, which read as
-                text with a decoration; the delivered artifact is the strongest
-                thing this section has, so it leads. */}
-            <div className="mx-auto max-w-3xl text-center">
-              <Reveal>
-                <ChapterMark className="justify-center">
-                  What you receive
-                </ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  A Personalized Reflection Built from the Coaching or
-                  Consulting Pattern You Describe
-                </h2>
-              </Reveal>
-              <Reveal delay={100}>
-                <p id="what-you-receive" className="text-body-lg mt-6 text-muted">
-                  You receive a scored, written report built from your own
-                  words, not a generic business profile.
-                </p>
-              </Reveal>
-            </div>
 
-            {/* The delivered report. This is the score screenshot. */}
-            <Reveal delay={140}>
-              <figure className="mx-auto mt-12 max-w-4xl">
-                <div className="media-frame overflow-hidden rounded-2xl bg-card">
-                  <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                    <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                    <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                    <span className="text-eyebrow ml-2 truncate text-faint">
-                      Your Belief Score report
-                    </span>
-                  </div>
-                  <Image
-                    src="/graphics/reportsummary.png"
-                    alt="An example Belief Score report: an overall score with scored dimensions and a written explanation of each"
-                    width={1792}
-                    height={815}
-                    sizes="(min-width: 1024px) 896px, 100vw"
-                    className="block h-auto w-full"
-                  />
-                </div>
-                <figcaption className="mt-3 text-center text-sm text-faint">
-                  Illustrative example · your own report is generated from the
-                  pattern you describe
-                </figcaption>
-              </figure>
-            </Reveal>
-
-            {/* The five fields, as icon cards rather than a bullet list. */}
-            <ul className="mt-14 grid list-none gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {MAP_FIELDS.map((field, i) => {
-                const Icon = MAP_FIELD_ICONS[i];
-                return (
-                  <Reveal as="li" key={field.title} delay={60 + i * 60}>
-                    <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-6">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-2 text-signal">
-                        <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-                      </span>
-                      <h3 className="text-title mt-5">{field.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-muted">
-                        {field.body}
-                      </p>
-                    </div>
-                  </Reveal>
-                );
-              })}
-            </ul>
-
-            {/* Early participant proof, kept visually secondary to the hero.
-                TODO(launch): replace with an exact approved statement. */}
-            <Reveal delay={180}>
-              <blockquote className="mx-auto mt-14 max-w-2xl border-l-2 border-signal pl-6">
-                <p className="text-title">
-                  &ldquo;It helped me see the pattern without turning it into
-                  another reason to judge myself.&rdquo;
-                </p>
-              </blockquote>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ================= Block 03 · Silent skepticism =================
-            Name the likely private objection before it becomes disengagement.
-
-            Structured as a REBUTTAL, because that is what the copy is: the
-            objection on the left, what the score concedes underneath it, and
-            the narrower question answering back on the right. Previously all
-            seven paragraphs ran down one 2xl column, so the shape gave no clue
-            that a turn was happening; the argument was there but invisible.
-            The two columns are separated by a rule on lg, which is the visual
-            equivalent of the "That may be true, but" pivot. */}
-        <section className="relative overflow-hidden">
-          <div className="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-0">
-              {/* Left: the objection, and what the score does not replace. */}
-              <div className="lg:pr-14">
+            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+              <div>
                 <Reveal>
-                  <ChapterMark>Before you scroll past</ChapterMark>
+                  <ChapterMark numeral="I">What you receive</ChapterMark>
                 </Reveal>
                 <Reveal delay={60}>
                   <h2 className="text-headline mt-5">
-                    Coaches and Consultants Often Arrive Thinking:
+                    A personalized Pattern-to-Belief Map,{" "}
+                    <span className="text-emphasis">
+                      built from your own words.
+                    </span>
                   </h2>
                 </Reveal>
                 <Reveal delay={100}>
-                  <blockquote className="mt-8 border-l-2 border-line pl-5">
-                    <p className="text-title text-fg">
-                      &ldquo;My problem is not belief. I need better
-                      positioning, stronger acquisition, clearer pricing, or
-                      more qualified leads.&rdquo;
-                    </p>
-                  </blockquote>
-                </Reveal>
-                <Reveal delay={140}>
-                  <p className="text-body-lg mt-8 font-medium text-fg">
-                    That may be true.
+                  <p
+                    id="what-you-receive"
+                    className="text-body-lg mt-6 text-muted"
+                  >
+                    You describe one recurring commercial moment. Your Map comes
+                    back with five things in it:
                   </p>
                 </Reveal>
-                <Reveal delay={160}>
-                  <p className="mt-6 text-eyebrow text-faint">
-                    What the score does not replace
-                  </p>
-                </Reveal>
-                {/* Two columns of short items: a concession list is easier to
-                    accept when it can be scanned than when it is a comma run. */}
-                <Reveal delay={180}>
-                  <ul className="mt-4 grid list-none gap-x-6 gap-y-2 sm:grid-cols-2">
-                    {NOT_A_REPLACEMENT_FOR.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-baseline gap-2.5 text-sm text-muted"
-                      >
-                        <span className="h-1 w-1 shrink-0 rounded-full bg-faint" aria-hidden />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Reveal>
-              </div>
 
-              {/* Right: the turn. The rule is the pivot made visible. */}
-              <div className="lg:border-l lg:border-line lg:pl-14">
-                <Reveal delay={120}>
-                  <p className="text-eyebrow text-signal">
-                    It asks one narrower question
-                  </p>
-                </Reveal>
-                <Reveal delay={160}>
-                  {/* Deliberately NOT text-headline: in a half-width column
-                      that ran seven lines and overpowered the objection it is
-                      answering. This keeps the italic emphasis (the pivot is
-                      still the loudest thing in the column) at a size that
-                      balances the left. */}
-                  <p className="mt-6 text-2xl leading-snug sm:text-3xl">
-                    <span className="text-emphasis">
-                      What happens in the moment when you already know the next
-                      useful business action, but move back into helping,
-                      refining, customizing, explaining, or preparing?
+                {/* The five written fields, as a WORKED EXAMPLE rather than as
+                    definitions - see the note on MAP_FIELDS. Compact rows, not
+                    cards: the four PILLARS below are the section that earns
+                    colour and space, and two competing card grids would flatten
+                    both.
+
+                    The "Illustrative" chip is not decoration. Spec rule: every
+                    product example must be labelled where it is READ, not only
+                    in a caption someone may scroll past. */}
+                <Reveal delay={130}>
+                  <p className="mt-6">
+                    <span className="rounded-full border border-line px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-faint">
+                      Illustrative example
                     </span>
                   </p>
                 </Reveal>
-                <div className="mt-10 space-y-4">
-                  {[
-                    "You do not have to accept another label.",
-                    "You do not have to treat every commercial problem as an internal problem.",
-                  ].map((line, i) => (
-                    <Reveal key={line} delay={200 + i * 40}>
-                      <p className="text-body-lg text-muted">{line}</p>
-                    </Reveal>
-                  ))}
-                  <Reveal delay={280}>
-                    <p className="text-body-lg border-t border-line pt-4 font-medium text-fg">
-                      You only have to decide whether the repeated moment is
-                      worth examining.
-                    </p>
-                  </Reveal>
-                </div>
+                <ul className="mt-4 grid list-none gap-4">
+                  {MAP_FIELDS.map((field, i) => {
+                    const Icon = MAP_FIELD_ICONS[i];
+                    return (
+                      <Reveal as="li" key={field.title} delay={140 + i * 40}>
+                        <div className="flex items-start gap-3.5">
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface-2 text-signal">
+                            <Icon
+                              className="h-4 w-4"
+                              strokeWidth={1.75}
+                              aria-hidden
+                            />
+                          </span>
+                          <p className="min-w-0">
+                            <span className="font-medium text-fg">
+                              {field.title}
+                            </span>
+                            <span className="text-muted"> — {field.body}</span>
+                          </p>
+                        </div>
+                      </Reveal>
+                    );
+                  })}
+                </ul>
+
+                <Reveal delay={330}>
+                  <p className="mt-6 text-sm text-faint">
+                    Your result is built from your words, not this one.
+                  </p>
+                </Reveal>
+
+                <Reveal delay={340}>
+                  <CtaBlock
+                    location="early_proof"
+                    align="start"
+                    microcopy="Free · No credit card · Yours to keep"
+                    className="mt-10"
+                  />
+                </Reveal>
               </div>
+
+              {/* The artifact itself, inside app-window chrome. Rendered rather
+                  than screenshotted so it cannot drift from the palette and
+                  cannot leak a fact the spec forbids publishing. Its numbers
+                  are illustrative and the caption says so directly beneath. */}
+              <Reveal delay={140}>
+                <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+                  <DeviceFrame title="your-belief-score">
+                    <ReportPreviewCard />
+                  </DeviceFrame>
+                  <p className="mt-3 text-center text-[11px] uppercase tracking-[0.18em] text-faint">
+                    Illustrative example · yours is built from your own words
+                  </p>
+                </div>
+              </Reveal>
             </div>
           </div>
         </section>
 
-        {/* ============ Block 04 · Recognition and revelation ============
-            ONE dominant pattern: creating more value when the business needs a
-            direct invitation. */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-5xl px-5 py-24 sm:px-8 sm:py-36">
-            {/* Opens as a split, not centred. This is the fourth section and
-                the third centred header in a row would flatten the page; the
-                heading also carries three short sentences that read better
-                stacked left than balanced on a centre axis. */}
-            <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-16">
+        {/* =============== II · The four pillars ===============
+            The colour system, and the answer to "what does the number actually
+            measure?". These four are the assessment's real scored dimensions,
+            in the funnel's own order, with its own labels and hues. */}
+        <section className="relative overflow-hidden">
+          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+            <div className="grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
               <div>
                 <Reveal>
-                  <ChapterMark>Sound familiar</ChapterMark>
+                  <ChapterMark numeral="II">Scored across four</ChapterMark>
                 </Reveal>
                 <Reveal delay={60}>
                   <h2 className="text-headline mt-5">
-                    The Coaching Is Good. The Consulting Works. The Client
-                    Results Are Real.
+                    One number, and the four things underneath it
+                  </h2>
+                </Reveal>
+              </div>
+              <Reveal delay={100}>
+                <p className="text-body-lg text-muted lg:pb-2">
+                  The overall score says how much room there is to move on this
+                  one pattern. The four pillars say where.
+                </p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={140}>
+              <div className="hairline-anim hairline my-12 sm:my-14" />
+            </Reveal>
+
+            {/* Each dial carries an icon, an over-line, a label, a value, and a
+                plain-language reading. Colour is the fifth encoding, never the
+                only one. */}
+            <ul className="grid list-none gap-5 sm:grid-cols-2">
+              {PILLAR_ORDER.map((key, i) => (
+                <Reveal as="li" key={key} delay={i * 80}>
+                  <PillarDial
+                    dimension={key}
+                    value={SAMPLE_SUBSCORES[key]}
+                  />
+                </Reveal>
+              ))}
+            </ul>
+
+            <Reveal delay={200}>
+              <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-faint">
+                Illustrative values. A lower number means more room to move on
+                this pattern. It is not a grade, and it does not rate your
+                expertise, your methodology, your pricing, or your professional
+                judgment.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* =============== III · The walkthrough ===============
+            Every screen, before they commit to any of them. */}
+        <section
+          id="walkthrough"
+          className="relative overflow-hidden border-y border-line bg-surface"
+          aria-labelledby="walkthrough-heading"
+        >
+          <div className="section-orbs" aria-hidden />
+          <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+            <div className="grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+              <div>
+                <Reveal>
+                  <ChapterMark numeral="III">The walkthrough</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 id="walkthrough-heading" className="text-headline mt-5">
+                    See the whole thing{" "}
+                    <span className="text-emphasis">before you begin.</span>
+                  </h2>
+                </Reveal>
+              </div>
+              <Reveal delay={100}>
+                <p className="text-body-lg text-muted lg:pb-2">
+                  Every screen, start to finish, so you know exactly what you
+                  are walking into and what you walk away with.
+                </p>
+              </Reveal>
+            </div>
+
+            <Reveal delay={140}>
+              <div className="hairline-anim hairline my-12 sm:my-14" />
+            </Reveal>
+
+            <Reveal delay={150}>
+              <Walkthrough />
+            </Reveal>
+          </div>
+        </section>
+
+        {/* =============== IV · Sound familiar ===============
+            The one recognition sequence the page keeps: three acts, the moment
+            itself, and the beliefs that may sit underneath it. */}
+        <section className="relative overflow-hidden">
+          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+            <div className="grid items-end gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+              <div>
+                <Reveal>
+                  <ChapterMark numeral="IV">Sound familiar</ChapterMark>
+                </Reveal>
+                <Reveal delay={60}>
+                  <h2 className="text-headline mt-5">
+                    The coaching is good. The consulting works. The client
+                    results are real.
                   </h2>
                 </Reveal>
               </div>
@@ -925,8 +631,6 @@ export default function Home() {
               </Reveal>
             </div>
 
-            {/* Three stage cards with connecting arrows: a sequence, not a wall
-                of one-liners. Arrows point down on mobile, right on desktop. */}
             <ol className="mt-14 grid list-none gap-4 md:grid-cols-3 md:gap-5">
               {RECOGNITION_ACTS.map((act, i) => (
                 <Reveal
@@ -949,11 +653,11 @@ export default function Home() {
                       {act.body}
                     </p>
                   </div>
-                  {/* Connector: chevron between cards. */}
+                  {/* Connector chevron: down on mobile, right on desktop. */}
                   {i < RECOGNITION_ACTS.length - 1 && (
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute left-1/2 top-full z-10 -translate-x-1/2 translate-y-1 text-signal md:left-full md:top-1/2 md:-translate-x-1 md:-translate-y-1/2 md:translate-y-0"
+                      className="pointer-events-none absolute left-1/2 top-full z-10 -translate-x-1/2 translate-y-1 text-signal md:left-full md:top-1/2 md:-translate-x-1 md:translate-y-0"
                     >
                       <svg
                         width="22"
@@ -976,206 +680,27 @@ export default function Home() {
               ))}
             </ol>
 
-            {/* From here the block is one continuous descent, not a stack of
-                separate widgets. The measure NARROWS at each step (3xl -> 2xl)
-                and the type quietens, so the section physically closes in on
-                the belief the way the pattern closes in on the practitioner.
-                This is the page's emotional low point; it should feel like one. */}
+            {/* NO PHOTOGRAPH HERE, and none anywhere on this page.
 
-            {/* What the incomplete commercial cycle quietly costs. Rendered as
-                a plain list, not pills: these are losses, and a row of rounded
-                chips reads like a feature list. */}
-            <Reveal delay={120}>
-              <div className="mx-auto mt-16 max-w-3xl">
-                <p className="text-eyebrow text-faint">
-                  What it quietly costs
-                </p>
-                <p className="text-body-lg mt-4 text-muted">
-                  The work remains alive. But the commercial cycle stays
-                  incomplete:
-                </p>
-                {/* One column, not two. Six short phrases of uneven length in a
-                    2-up grid left a ragged orphan on the last row; stacked, they
-                    read as a list of losses accumulating, which is the point. */}
-                <ul className="mt-6 list-none">
-                  {RECOGNITION_CONSEQUENCES.map((line) => (
-                    <li
-                      key={line}
-                      className="border-t border-line py-3 text-muted"
-                    >
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
+                An atmospheric stock shot of a consultant sat here until the
+                v3.0 review. The rule it broke: every human image on this page
+                must be a real participant with written consent, the real
+                founder, or a clearly-staged illustrative scene shot for this
+                brand. Licensed stock of an unnamed professional beside copy
+                about someone's business failing to close reads, to a skeptical
+                buyer, as a customer who does not exist - and a professional
+                audience is exactly the audience that checks.
 
-            {/* The reinforcing loop. Set as a wrapping chain of small steps
-                rather than a bordered card: the point is that it never stops
-                and comes back around, which a boxed panel contradicts. */}
-            {/* The loop, drawn rather than described.
+                The replacement is not another image. The three act cards above
+                already carry this beat visually; what this block needed was
+                less, not a different picture. IMG-03/04/05 in the v3.0 manifest
+                are staged scenes to be shot alongside the ad creative for ads
+                01, 14 and 15, and they belong inside those three cards when
+                they exist. */}
 
-                This is the one idea on the page that is genuinely circular:
-                each step feeds the next and the last returns to the first. As
-                a wrapping line of text with arrows it read as a list that
-                happened to end with a curved arrow; as a ring the "it comes
-                back" claim is visible before a word is read. Six nodes on a
-                circle, arrowheads following the direction of travel, and the
-                closing arc drawn in the accent so the return is the emphasised
-                edge.
-
-                Hand-authored inline SVG: currentColor for strokes and text so
-                it themes with the page, one literal accent on the closing edge,
-                role="img" + aria-label carrying the same claim for anyone who
-                cannot see it. */}
-            <Reveal delay={130}>
-              <figure className="mx-auto mt-14 max-w-3xl">
-                <p className="text-eyebrow text-center text-faint">
-                  Then the loop closes
-                </p>
-                <svg
-                  viewBox="0 0 820 470"
-                  role="img"
-                  aria-label="A closed cycle of six steps: the pipeline becomes quiet, revenue pressure rises, selling becomes urgent, the next conversation carries more weight, action finally arrives under pressure, pressure receives the credit, and the cycle returns to the beginning."
-                  className="mt-6 h-auto w-full text-muted"
-                >
-                  <defs>
-                    <marker
-                      id="loop-arrow"
-                      viewBox="0 0 10 10"
-                      refX="9"
-                      refY="5"
-                      markerWidth="5"
-                      markerHeight="5"
-                      orient="auto-start-reverse"
-                    >
-                      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" />
-                    </marker>
-                  </defs>
-
-                  {/* Six connecting arcs around a 150px-radius circle centred
-                      at (310,190). Each spans the gap between two nodes. */}
-                  {RECOGNITION_LOOP.map((_, i) => {
-                    const n = RECOGNITION_LOOP.length;
-                    const gap = 0.34; // radians trimmed at each end for the node
-                    const a0 = (i / n) * Math.PI * 2 - Math.PI / 2 + gap;
-                    const a1 = ((i + 1) / n) * Math.PI * 2 - Math.PI / 2 - gap;
-                    const r = 140;
-                    const x0 = 410 + r * Math.cos(a0);
-                    const y0 = 215 + r * Math.sin(a0);
-                    const x1 = 410 + r * Math.cos(a1);
-                    const y1 = 215 + r * Math.sin(a1);
-                    const last = i === n - 1;
-                    return (
-                      <path
-                        key={i}
-                        d={`M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={last ? 2 : 1.25}
-                        className={last ? "text-signal" : "text-line"}
-                        markerEnd="url(#loop-arrow)"
-                        opacity={last ? 1 : 0.75}
-                      />
-                    );
-                  })}
-
-                  {/* Nodes: a numbered dot plus the step, set on two lines so
-                      long phrases do not collide with their neighbours. */}
-                  {RECOGNITION_LOOP.map((step, i) => {
-                    const n = RECOGNITION_LOOP.length;
-                    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-                    const x = 410 + 140 * Math.cos(a);
-                    const y = 215 + 140 * Math.sin(a);
-                    // Push labels outward, away from the ring's centre. The
-                    // viewBox carries ~190px of runway each side and ~60px top
-                    // and bottom so no label is ever clipped.
-                    const lx = 410 + 168 * Math.cos(a);
-                    const ly = 215 + 168 * Math.sin(a);
-                    const anchor =
-                      Math.abs(Math.cos(a)) < 0.25
-                        ? "middle"
-                        : Math.cos(a) > 0
-                          ? "start"
-                          : "end";
-                    const words = step.split(" ");
-                    const mid = Math.ceil(words.length / 2);
-                    const l1 = words.length > 3 ? words.slice(0, mid).join(" ") : step;
-                    const l2 = words.length > 3 ? words.slice(mid).join(" ") : "";
-                    return (
-                      <g key={step}>
-                        <circle
-                          cx={x}
-                          cy={y}
-                          r="5"
-                          fill="currentColor"
-                          className="text-signal"
-                        />
-                        <text
-                          x={lx}
-                          y={ly - (l2 ? 6 : 0)}
-                          textAnchor={anchor}
-                          fontSize="13"
-                          fill="currentColor"
-                        >
-                          {l1}
-                        </text>
-                        {l2 && (
-                          <text
-                            x={lx}
-                            y={ly + 11}
-                            textAnchor={anchor}
-                            fontSize="13"
-                            fill="currentColor"
-                          >
-                            {l2}
-                          </text>
-                        )}
-                      </g>
-                    );
-                  })}
-
-                  <text
-                    x="410"
-                    y="210"
-                    textAnchor="middle"
-                    fontSize="13"
-                    fill="currentColor"
-                    className="text-faint"
-                  >
-                    and it starts
-                  </text>
-                  <text
-                    x="410"
-                    y="228"
-                    textAnchor="middle"
-                    fontSize="13"
-                    fill="currentColor"
-                    className="text-faint"
-                  >
-                    again
-                  </text>
-                </svg>
-                <figcaption className="mx-auto mt-4 max-w-xl text-center text-sm text-faint">
-                  Because action finally arrives under pressure, pressure
-                  receives the credit. Again.
-                </figcaption>
-              </figure>
-            </Reveal>
-
-            {/* The central reframe: the payoff the whole section builds toward.
-                Promoted to text-display so the page has a SECOND peak here (the
-                hero is the first). Previously this sat at text-headline, the
-                same size as the seven other section headings, which buried the
-                one sentence the block exists to deliver. */}
+            {/* The reframe this section exists to deliver. */}
             <Reveal delay={140}>
-              {/* Left-aligned, not centred: everything from here to the CTA sits
-                  on one left axis, and a centred block in the middle of that
-                  descent breaks the column the reader is following. Held at
-                  text-headline rather than text-display so five lines of
-                  Fraunces stay readable - the emphasis clause carries the peak,
-                  the size does not have to. */}
-              <p className="text-headline mx-auto mt-20 max-w-3xl">
+              <p className="text-headline mx-auto mt-16 max-w-3xl">
                 The extra value may not only be improving the offer.{" "}
                 <span className="text-emphasis">
                   It may be protecting the relationship, the expertise, or the
@@ -1184,13 +709,12 @@ export default function Home() {
               </p>
             </Reveal>
 
-            {/* The beliefs. Narrowed to 2xl and stripped of cards: these are
-                things a reader might quietly recognise in themselves, and a
-                2-across grid of hoverable panels turns private admissions into
-                a product feature comparison. A single column of hanging quotes
-                on a hairline rail lets them be read one at a time. */}
+            {/* The beliefs. A single column of hanging quotes on a hairline
+                rail, not a card grid: these are things a reader might quietly
+                recognise in themselves, and a 2-across grid of hoverable panels
+                turns private admissions into a feature comparison. */}
             <Reveal delay={160}>
-              <p className="text-body-lg mx-auto mt-16 max-w-2xl text-muted">
+              <p className="text-body-lg mx-auto mt-14 max-w-2xl text-muted">
                 The possible belief may sound like:
               </p>
             </Reveal>
@@ -1205,7 +729,7 @@ export default function Home() {
             </ul>
 
             <Reveal delay={170}>
-              <div className="text-body-lg mx-auto mt-12 max-w-2xl space-y-3 text-muted">
+              <div className="text-body-lg mx-auto mt-10 max-w-2xl space-y-3 text-muted">
                 <p>The belief may not be the whole business problem.</p>
                 <p className="font-medium text-fg">
                   But it may be influencing what happens each time care,
@@ -1220,709 +744,28 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ============ Block 05 · Why this is possible now ============
-            Two columns: the "why now" narrative on the left, the moments that
-            look separate on the right. */}
-        <section className="mx-auto w-full max-w-5xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-            <div>
-              <Reveal>
-                <ChapterMark>Why now</ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  Separate Business Moments, One Underlying Coaching and
-                  Consulting Pattern
-                </h2>
-              </Reveal>
-              <div className="text-body-lg mt-7 space-y-4 text-muted">
-                <Reveal delay={100}>
-                  <p>Each moment can appear isolated.</p>
-                </Reveal>
-                <Reveal delay={140}>
-                  <p>
-                    But when the language, sequence, response, consequence, and
-                    interpretation are viewed together, a larger pattern may
-                    become easier to see.
-                  </p>
-                </Reveal>
-                <Reveal delay={160}>
-                  <p>
-                    Technology can help organize those connections with greater
-                    consistency.
-                  </p>
-                </Reveal>
-                {/* The technology boundary, stated as the spec requires. */}
-                <Reveal delay={180}>
-                  <p>Not to tell you what your practice needs.</p>
-                </Reveal>
-                <Reveal delay={200}>
-                  <p>Not to determine the truth about your identity.</p>
-                </Reveal>
-                <Reveal delay={220}>
-                  <p>
-                    Not to replace market evidence, professional judgment, or
-                    human support.
-                  </p>
-                </Reveal>
-              </div>
-
-              <Reveal delay={240}>
-                <p className="text-body-lg mt-8 text-muted">To help reflect:</p>
-              </Reveal>
-              <ul className="mt-5 grid list-none gap-3">
-                {WHAT_IT_REFLECTS.map((line, i) => (
-                  <Reveal as="li" key={line} delay={260 + i * 30}>
-                    <div className="flex items-start gap-3">
-                      <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                      <p className="text-muted">{line}</p>
-                    </div>
-                  </Reveal>
-                ))}
-              </ul>
-
-              <Reveal delay={300}>
-                <div className="text-title mt-10 space-y-3 border-l-2 border-signal pl-6 leading-relaxed">
-                  <p>The technology helps reveal the pattern.</p>
-                  <p className="text-emphasis">You decide what it means.</p>
-                  <p>Your actions create the evidence that matters.</p>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal delay={120}>
-              <div className="rounded-2xl border border-line bg-card p-7 sm:p-8">
-                <p className="text-eyebrow text-faint">
-                  Moments that may feel unrelated
-                </p>
-                <ul className="mt-6 grid list-none gap-4">
-                  {SEPARATE_PATTERNS.map((pair, i) => (
-                    <Reveal as="li" key={pair.a} delay={140 + i * 40}>
-                      <div className="rounded-xl border border-line bg-surface-2 px-4 py-4">
-                        <p className="text-sm font-medium text-fg">{pair.a}</p>
-                        <p className="mt-1.5 flex items-start gap-2 text-sm text-muted">
-                          <span className="text-signal" aria-hidden>
-                            &darr;
-                          </span>
-                          <span>{pair.b}</span>
-                        </p>
-                      </div>
-                    </Reveal>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ============ Block 06 · The Pattern-to-Belief Map ============ */}
-        <section className="relative overflow-hidden border-t border-line bg-surface">
+        {/* =============== V · Proof ===============
+            Participants, then the person behind the method, then the logos.
+            The founder is a quote plus a four-fact credential strip rather
+            than the five-paragraph narrative this used to be: a visitor needs
+            to know the creator has stood inside the same commercial moment,
+            and then needs to get back to the offer. */}
+        <section className="relative overflow-hidden border-y border-line bg-surface">
           <div className="section-orbs" aria-hidden />
           <div className="relative mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-            {/* Sticky two-column instead of a centred header over a tall
-                column. Nine of thirteen sections opened centred, so the page
-                had no change of shape to hold the eye; here the heading pins
-                while the five stages travel past it, which also keeps the
-                reader oriented in a long sequence. Collapses to normal stacked
-                flow below lg. */}
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-              <div className="lg:sticky lg:top-28 lg:self-start">
-                <Reveal>
-                  <ChapterMark>The mechanism</ChapterMark>
-                </Reveal>
-                <Reveal delay={60}>
-                  <h2 className="text-headline mt-5">
-                    Your Coaches and Consultants Belief Score Creates a
-                    Pattern-to-Belief Map
-                  </h2>
-                </Reveal>
-                <Reveal delay={120}>
-                  <p className="text-body-lg mt-6 text-muted">
-                    Not another business archetype, marketing personality, or
-                    readiness label. One pattern that matters now, broken into
-                    five connected stages.
-                  </p>
-                </Reveal>
-                <Reveal delay={160}>
-                  <p className="text-eyebrow mt-8 text-faint">
-                    Five stages
-                  </p>
-                </Reveal>
-              </div>
-
-            {/* A spine, not a 5-across card row.
-
-                Two reasons the grid was wrong here. First, these five stages are
-                a SEQUENCE - each one only makes sense after the one above it -
-                and five equal boxes side by side read as five independent
-                options. Second, their bodies differ ~3x in length (stage 1
-                carries four quoted examples, stage 5 carries one), so equal
-                columns forced ragged whitespace under the short ones.
-
-                The rail is the argument made visible: one continuous line with
-                the stage number sitting on it. Numbering earns its place here
-                because the order genuinely carries meaning. */}
-              <ol className="list-none">
-              {MAP_STAGES.map((stage, i) => (
-                <Reveal as="li" key={stage.title} delay={i * 70}>
-                  {/* pb-14 (not pb-9): the gap BETWEEN stages has to be clearly
-                      larger than the gaps inside a stage's own body, or the
-                      next stage's title reads as another paragraph of the
-                      previous one. The numbered node is nudged down slightly to
-                      sit on the title's optical centre. */}
-                  {/* On phones the node shrinks (h-7) and the gap tightens, so
-                      the rail costs ~44px of a 320px viewport instead of ~110px
-                      - otherwise the body text was squeezed to a measure barely
-                      wider than three words. */}
-                  <div className="relative flex gap-4 pb-14 last:pb-0 sm:gap-7">
-                    <div className="flex flex-col items-center">
-                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-card text-xs text-faint tabular-nums sm:h-9 sm:w-9 sm:text-sm">
-                        {i + 1}
-                      </span>
-                      {/* The connector stops at the last stage. */}
-                      {i < MAP_STAGES.length - 1 && (
-                        <span className="mt-3 w-px flex-1 bg-line" aria-hidden />
-                      )}
-                    </div>
-                    <div className="min-w-0 pb-1">
-                      <h3 className="text-title">{stage.title}</h3>
-                      <div className="map-stage-body mt-3 space-y-3 leading-relaxed text-muted">
-                        {stage.body}
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-              </ol>
-            </div>
-
-            <Reveal delay={120}>
-              <CtaBlock
-                location="score_definition"
-                microcopy="Short guided reflection · Personalized result · No credit card"
-                className="mt-16"
-              />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ====== Block 07 · Process demonstration + example result ====== */}
-        <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="mx-auto max-w-2xl text-center">
-            <Reveal>
-              <ChapterMark>From your words to your map</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                See How the Coaches and Consultants Belief Score Works
-              </h2>
-            </Reveal>
-          </div>
-
-          {/* The guided reflection interface, built in-page rather than shown as
-              a screenshot.
-
-              The previous capture was from a different AI Merge assessment and
-              was disqualified on three counts: it rendered "QUESTION 1 · 5"
-              (the spec forbids publishing a question count until one is
-              verified), it carried a stray browser-extension icon in the
-              textarea, and its copy was generic wellness framing rather than
-              coach/consultant framing.
-
-              Building it in JSX keeps the design tokens honest, keeps the copy
-              on-message, and cannot leak an unverified fact. Labelled
-              illustrative. TODO(launch): swap for a real capture of the approved
-              Coaches and Consultants interface. */}
-          <Reveal delay={100}>
-            <figure className="mx-auto mt-12 max-w-3xl">
-              <div className="media-frame overflow-hidden rounded-2xl bg-card">
-                {/* Window chrome: the three dots + mono label is the shared
-                    product-mock cue used across the other AI Merge funnel
-                    pages, so a visitor who has seen one recognises this as the
-                    same product family. Rendered in this page's own tokens
-                    (line/faint, eyebrow tracking) rather than copied wholesale,
-                    which keeps it recognisably the same but not identical. */}
-                <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                  <span className="text-eyebrow ml-2 text-faint">
-                    Guided reflection
-                  </span>
-                  <span className="ml-auto hidden text-xs text-faint sm:inline">
-                    Answer in your own words
-                  </span>
-                </div>
-                {/* Two-column body, mirroring the shared reflection graphic:
-                    prompt + answer field on the left, a quiet guidance rail on
-                    the right. The graphic's "QUESTION 1 · 5" counter is NOT
-                    reproduced - the spec forbids publishing a question count
-                    until one is verified - and the stage kicker carries the
-                    orientation instead. */}
-                <div className="grid gap-7 px-6 py-7 sm:px-8 sm:py-9 lg:grid-cols-[1.35fr_1fr] lg:gap-9">
-                  <div className="min-w-0">
-                    <p className="text-eyebrow text-faint">
-                      Stage 1 · The repeated moment
-                    </p>
-                    <p className="text-title mt-3">
-                      Think of one moment that keeps repeating in your practice.
-                      What happens, and what do you tend to do next?
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed text-faint">
-                      Not a one-word label. Tell it the way you would say it out
-                      loud. There is no perfect wording, and messy answers are
-                      fine.
-                    </p>
-                    {/* Static mock of the answer field: a div, not an input, so
-                        nothing here is focusable or submittable. */}
-                    <div
-                      aria-hidden
-                      className="mt-6 rounded-xl border border-(--border-strong) bg-bg px-5 py-4"
-                    >
-                      <p className="text-muted">
-                        &ldquo;The conversation goes well, but when it&rsquo;s
-                        time to actually recommend the offer, I start explaining
-                        more and adding things instead of just naming the next
-                        step.&rdquo;
-                        <span className="ml-0.5 inline-block h-5 w-px translate-y-1 bg-signal" />
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="min-w-0 space-y-4">
-                    <blockquote className="border-l-2 border-signal pl-4 text-sm leading-relaxed text-muted italic">
-                      &ldquo;The constraint is almost never where it appears to
-                      be.&rdquo;
-                    </blockquote>
-                    <div className="rounded-xl border border-line bg-surface-2 px-4 py-3.5">
-                      <p className="text-sm leading-relaxed text-muted">
-                        <span className="font-medium text-fg">Tip:</span> say it
-                        out loud if you can. Spoken answers tend to go further
-                        than typed ones.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <figcaption className="mt-3 text-center text-sm text-faint">
-                Illustrative interface. The reflection is short and guided; you
-                answer in plain language, and no business jargon is required.
-              </figcaption>
-            </figure>
-          </Reveal>
-
-          {/* Asymmetric: the left column is six short steps, the right is one
-              long result panel that runs ~1.6x its height. An even 2-col split
-              left a large void under the timeline, so the narrative column is
-              held narrower and the panel given the extra width it actually
-              needs. `items-start` keeps both pinned to the top rather than
-              stretching the short column. */}
-          <div className="mt-14 grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-            {/* Process: participant language becomes the map, step by step. */}
-            <ol className="relative list-none space-y-0">
-              {PROCESS_STEPS.map((step, i) => (
-                <Reveal as="li" key={step.title} delay={i * 50}>
-                  {/* Same spacing rule as the Block 06 spine: the gap between
-                      steps must beat the gaps inside a step's body, or each
-                      title reads as a continuation of the step above it. */}
-                  <div className="relative flex gap-4 pb-12 last:pb-0 sm:gap-5">
-                    <div className="flex flex-col items-center">
-                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line bg-card text-xs text-faint tabular-nums sm:h-8 sm:w-8">
-                        {i + 1}
-                      </span>
-                      {i < PROCESS_STEPS.length - 1 && (
-                        <span className="mt-2.5 w-px flex-1 bg-line" aria-hidden />
-                      )}
-                    </div>
-                    <div className="min-w-0 pb-1">
-                      <h3 className="text-title">{step.title}</h3>
-                      <div className="map-stage-body mt-2.5 space-y-2 leading-relaxed text-muted">
-                        {step.body}
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-
-            {/* Illustrative result panel.
-                Treatment borrowed from the shared funnel report graphic: window
-                chrome, a titled header row with a "Sample" pill, then one
-                numbered row per field on hairline dividers. The NUMBERS and
-                PROGRESS BARS from that graphic are deliberately not carried
-                over - they belong to a 0-100 scored index, and this product
-                returns no score. The spec's product-visual rules require the
-                five Map fields and forbid fake diagnostic scoring, so the
-                layout is shared and the content stays true. */}
-            <Reveal delay={100}>
-              <figure className="vsl-frame relative overflow-hidden rounded-2xl bg-card">
-                <div className="flex items-center gap-2 border-b border-line px-6 py-4">
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                  <span className="text-eyebrow ml-2 truncate text-faint">
-                    Your Pattern-to-Belief Map
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-3 border-b border-line px-6 py-4">
-                  <div className="min-w-0">
-                    <h3 className="text-title">Your result</h3>
-                    <p className="text-eyebrow mt-1 text-faint">
-                      Built from your own words
-                    </p>
-                  </div>
-                  <span className="cred-chip shrink-0 !py-1.5 !text-xs">
-                    Sample
-                  </span>
-                </div>
-
-                <dl className="list-none">
-                  {EXAMPLE_RESULT.map((row, i) => (
-                    <div
-                      key={row.label}
-                      className="flex gap-4 border-b border-line px-6 py-5 last:border-b-0"
-                    >
-                      <span
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-xs text-faint tabular-nums"
-                        aria-hidden
-                      >
-                        {i + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <dt className="text-eyebrow text-signal">{row.label}</dt>
-                        <dd className="map-stage-body mt-1.5 leading-relaxed text-muted">
-                          {row.body}
-                        </dd>
-                      </div>
-                    </div>
-                  ))}
-                </dl>
-              </figure>
-            </Reveal>
-          </div>
-
-          {/* The downloadable summary only. The scored report itself already
-              leads Block 02 ("What you receive"); repeating it here showed the
-              same artifact twice within one scroll. This is the other half of
-              what gets delivered - the version you keep - so it still earns a
-              place, just not a duplicated one.
-
-              NOTE ON CONTENT: this is a capture of the current live report, so
-              the wording inside it is that product's rather than final
-              coach-specific copy. TODO(launch): replace with the approved
-              Coaches and Consultants capture. */}
-          <Reveal delay={160}>
-            <figure className="mx-auto mt-10 max-w-3xl">
-              <div className="media-frame overflow-hidden rounded-2xl bg-card">
-                <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                  <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                  <span className="text-eyebrow ml-2 truncate text-faint">
-                    Your summary, ready to keep
-                  </span>
-                </div>
-                <Image
-                  src="/graphics/reportpdf.png"
-                  alt="Example of the downloadable AI Merge report summary"
-                  width={988}
-                  height={769}
-                  sizes="(min-width: 1024px) 768px, 100vw"
-                  className="block h-auto w-full"
-                />
-              </div>
-              <figcaption className="mt-3 text-center text-sm text-faint">
-                The same result, as a summary you can keep and share
-              </figcaption>
-            </figure>
-          </Reveal>
-
-          <div className="mx-auto mt-14 max-w-2xl text-center">
-            <Reveal>
-              <p className="text-title">
-                Your result will be created from your own words.
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <p className="text-body-lg mt-5 text-muted">
-                This example does not predict your result. Your
-                Pattern-to-Belief Map may identify a different moment, belief,
-                loop, and next evidence. You may accept, refine, question, or
-                reject any part of it.
-              </p>
-            </Reveal>
-            <Reveal delay={120}>
-              <CtaBlock location="sample_result" className="mt-10" />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ============== Block 08 · Identity transition ==============
-            Deeper value without promising total business transformation. */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-5xl px-5 py-20 sm:px-8 sm:py-28">
             <div className="mx-auto max-w-2xl text-center">
               <Reveal>
-                <ChapterMark>What becomes possible</ChapterMark>
+                <ChapterMark numeral="V" className="justify-center">
+                  In their words
+                </ChapterMark>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  The Goal Is Not to Turn You Into a Salesperson
-                </h2>
-              </Reveal>
-              <Reveal delay={100}>
-                <p className="text-body-lg mt-6 text-muted">
-                  It is not to stop caring. It is not to abandon depth. It is
-                  not to turn every conversation into a pitch. It is not to
-                  standardize work that genuinely requires judgment. It is not
-                  to remove human presence from coaching or consulting.
-                </p>
-              </Reveal>
-              <Reveal delay={140}>
-                <p className="text-body-lg mt-6 font-medium text-fg">
-                  It is to stop treating one repeated commercial moment as proof
-                  that care and clarity cannot coexist.
-                </p>
-              </Reveal>
-              <Reveal delay={180}>
-                <p className="text-body-lg mt-6 text-muted">
-                  A different response may look like:
-                </p>
-              </Reveal>
-            </div>
-
-            {/* Unnumbered. These eight are ALTERNATIVES a reader might pick one
-                of - they have no order, no dependency, and no progression - so
-                01/02/03 markers asserted a sequence that does not exist. The
-                accent tick marks each as an available option instead, which is
-                what the copy actually means. */}
-            <ul className="mt-12 grid list-none gap-4 sm:grid-cols-2">
-              {FIRST_SHIFTS.map((line, i) => (
-                <Reveal as="li" key={line} delay={i * 60}>
-                  <div className="liftable flex h-full items-start gap-3.5 rounded-2xl border border-line bg-card p-6">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      aria-hidden
-                      className="mt-1 shrink-0 text-signal"
-                    >
-                      <path
-                        d="M4 12.5 9.5 18 20 7"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="leading-relaxed text-muted">{line}</span>
-                  </div>
-                </Reveal>
-              ))}
-            </ul>
-
-            <div className="mx-auto mt-14 max-w-2xl text-center">
-              <Reveal delay={160}>
-                <p className="text-body-lg text-muted">
-                  You let a prospect say yes, no, or not now without turning the
-                  answer into a verdict about your worth or methodology.
-                </p>
-              </Reveal>
-              <Reveal delay={200}>
-                <div className="text-headline mt-8 space-y-2">
-                  <p>Selling does not have to erase service.</p>
-                  <p>Simplicity does not have to erase depth.</p>
-                  <p>Scale does not have to erase discernment.</p>
-                  <p className="text-emphasis">
-                    Receiving value does not make the work less ethical.
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={240}>
-                <p className="text-body-lg mt-8 text-muted">
-                  One different action does not rewrite a professional identity.
-                  But it can begin creating evidence that another version of the
-                  pattern is available.
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* ==== Block 09 · Founder, credentials, and logos ==== */}
-        <section className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="grid items-start gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-            <Reveal className="relative">
-              <div className="relative overflow-hidden rounded-2xl border border-line">
-                <Image
-                  src="/manuj/closeup.jpg"
-                  alt="Manuj Aggarwal, creator of AI Merge"
-                  width={1400}
-                  height={1867}
-                  sizes="(min-width: 1024px) 430px, 100vw"
-                  className="h-96 w-full object-cover object-top lg:h-136"
-                />
-              </div>
-            </Reveal>
-
-            <div className="min-w-0">
-              {/* Retitled and refocused. The spec's own heading was "Why I
-                  Created AI Merge", which makes the section about the founder
-                  rather than about the reader; the owners flagged it. The
-                  section stays (Block 09 exists to connect Manuj's lived
-                  experience to the product) but now leads with the coach and
-                  consultant relevance, and the backstory is compressed so the
-                  factory/Canada detail serves the selling-vs-building pattern
-                  instead of standing as a general biography. */}
-              <Reveal>
-                <ChapterMark>Why AI Merge exists</ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  Why This Work Exists
-                </h2>
-              </Reveal>
-              <Reveal delay={100}>
-                <blockquote className="text-emphasis mt-7 text-xl leading-relaxed">
-                  &ldquo;I knew how to create transformation. I did not always
-                  see the belief deciding when that work could be priced,
-                  received, simplified, or carried by someone other than
-                  me.&rdquo;
-                </blockquote>
-              </Reveal>
-              {/* v2.1 cut the extended founder narrative to a short relevance
-                  statement. Personal history is not this block's persuasive
-                  job: the visitor needs one passage proving the creator has
-                  stood inside the same commercial moment, then credentials,
-                  then out. Per the spec, do NOT reintroduce life history,
-                  origin narrative, career chronology, or a personal
-                  transformation arc here. */}
-              <div className="text-body-lg mt-7 space-y-4 text-muted">
-                <Reveal>
-                  <p>
-                    Across three decades of consulting, advising, and building
-                    companies, the same gap kept appearing, in my own work and
-                    in the work of the experts around me.
-                  </p>
-                </Reveal>
-                <Reveal delay={40}>
-                  <p>
-                    Knowing how to solve the problem is one capability. Letting
-                    the work be priced, simplified, delegated, and directly
-                    offered is a different one.
-                  </p>
-                </Reveal>
-                <Reveal delay={80}>
-                  <p>
-                    Understanding the commercial behavior did not automatically
-                    reveal what the repeated moment had taught me to believe.
-                    That gap is what{" "}
-                    <span className="font-medium text-fg">AI Merge</span> was
-                    built to make visible, then return authority to the person
-                    examining it.
-                  </p>
-                </Reveal>
-              </div>
-              <Reveal delay={140}>
-                <p className="mt-6 font-medium text-fg">Manuj Aggarwal</p>
-              </Reveal>
-
-              <Reveal delay={160}>
-                <div className="mt-10 rounded-2xl border border-line bg-card p-7">
-                  <p className="text-eyebrow text-faint">About the Creator</p>
-                  {/* Label above value, with an icon, rather than a bulleted
-                      list: these are four discrete facts, and a stat row lets
-                      each be read on its own instead of scanned as prose. */}
-                  <ul className="mt-5 grid list-none gap-x-6 gap-y-5 sm:grid-cols-2">
-                    {CREDENTIALS.map((c, i) => {
-                      const Icon = CREDENTIAL_ICONS[i];
-                      return (
-                        <li key={c.label} className="flex items-start gap-3">
-                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface-2 text-signal">
-                            <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
-                          </span>
-                          <span className="min-w-0">
-                            <span className="text-eyebrow block text-faint">
-                              {c.label}
-                            </span>
-                            <span className="mt-1 block text-sm leading-snug text-fg">
-                              {c.value}
-                            </span>
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <p className="mt-5 text-sm leading-relaxed text-faint">
-                    AI Merge combines AI-supported pattern recognition with a
-                    human-first methodology designed to support insight,
-                    self-attunement, practical action, and greater personal
-                    agency.
-                  </p>
-                  {/* TODO(launch): verify current title, patent wording,
-                      publication wording, approved "peer-reviewed" wording,
-                      methodology wording, and the "three decades" timeframe in
-                      the relevance statement above - v2.1 added that last one
-                      to the verification register explicitly, so it must be
-                      confirmed against the company record before publication. */}
-                </div>
-              </Reveal>
-            </div>
-          </div>
-
-          <Reveal delay={100}>
-            <div className="mt-16">
-              <p className="text-eyebrow text-center text-faint">
-                Professional Experience Behind AI Merge
-              </p>
-              <ul className="mt-8 flex list-none flex-wrap items-center justify-center gap-x-12 gap-y-6">
-                {TRUST_LOGOS.map((logo) => (
-                  <li
-                    key={logo.alt}
-                    className="relative h-9 w-24 opacity-60 grayscale sm:h-10 sm:w-28"
-                  >
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      fill
-                      sizes="(min-width: 640px) 112px, 96px"
-                      className="object-contain"
-                    />
-                  </li>
-                ))}
-              </ul>
-              <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed text-faint">
-                Organizations shown reflect prior professional work by Manuj
-                Aggarwal and do not imply endorsement of the Coaches and
-                Consultants Belief Score, AI Merge, TetraNoodle Technologies, or
-                this offer.
-              </p>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* ========= Block 10 · Participant proof ========= */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-5xl px-5 py-20 sm:px-8 sm:py-28">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <p className="chapter justify-center text-eyebrow">
-                  <span className="chapter-dot" aria-hidden />
-                  <span>In their words</span>
-                </p>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  What People Have Noticed Working Through AI Merge
+                  What people have noticed working through AI Merge
                 </h2>
               </Reveal>
             </div>
 
-            {/* TODO(launch): verify exact wording, name or approved anonymity,
-                professional role, program referenced, written consent, and
-                display restrictions for each statement below. */}
             <ul className="mt-12 grid list-none gap-5 md:grid-cols-2">
               {TESTIMONIALS.map((t, i) => (
                 <Reveal as="li" key={t.name} delay={i * 80}>
@@ -1940,434 +783,340 @@ export default function Home() {
               ))}
             </ul>
 
-            {/* Video proof reel. These clips are general AI Merge participants,
-                NOT coaches and consultants specifically, and they speak to the
-                broader programme rather than to the free Belief Score. The
-                disclaimer below says exactly that rather than implying they are
-                proof of this product for this audience.
-                TODO(launch): replace with coach/consultant clips carrying
-                written consent for this funnel, per the spec's proof register. */}
-            <div className="mt-16">
-              <Reveal delay={100}>
-                <p className="text-eyebrow text-center text-faint">
-                  More in their own words
-                </p>
-              </Reveal>
-              <Reveal immediate>
-                <div className="mt-7">
-                  <TestimonialReel />
+            {/* v3.0 Fix 03: the twelve-clip video wall is GONE, not shrunk.
+
+                It sat directly above a disclaimer conceding that the speakers
+                may not be coaches or consultants and may not be talking about
+                this product. Twelve faces making a claim the caption
+                immediately withdraws is worse than no proof at all in front of
+                a professional audience - the rule is at most two clips, chosen
+                for relevance, and text only if none qualify. None currently
+                qualify, so this is text only.
+
+                The two quotes above are typographic on purpose. Adding stock
+                portraits of people who are not the actual participants is
+                manufactured proof, which is the fastest way to lose a
+                skeptical reader.
+
+                TODO(launch): restore <TestimonialReel /> with at most two
+                clips once coach or consultant participants with written
+                consent for this funnel exist. The component is still in the
+                repo. */}
+            <Reveal delay={120}>
+              <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-faint">
+                Individual experiences vary. These accounts reflect experiences
+                across the broader AI Merge work rather than the free Coaches
+                and Consultants Belief Score, and do not guarantee that another
+                participant will receive the same result.
+              </p>
+            </Reveal>
+
+            {/* The creator, compressed. */}
+            <div className="mt-20 grid items-center gap-10 lg:grid-cols-[0.5fr_1.5fr] lg:gap-14">
+              <Reveal>
+                <div className="signal-halo relative">
+                  <div className="img-hover-zoom relative overflow-hidden rounded-2xl border border-line">
+                    <Image
+                      src="/manuj/closeup.jpg"
+                      alt="Manuj Aggarwal, creator of AI Merge"
+                      width={1400}
+                      height={1867}
+                      sizes="(min-width: 1024px) 280px, 60vw"
+                      className="aspect-3/4 w-full object-cover object-top"
+                    />
+                  </div>
                 </div>
               </Reveal>
-            </div>
 
-            <Reveal delay={120}>
-              <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-faint">
-                Individual experiences vary. These accounts reflect personal
-                experiences across the broader AI Merge work rather than the
-                free Coaches and Consultants Belief Score, and are not
-                necessarily from coaches or consultants. They do not guarantee
-                that another participant will receive the same result or
-                business outcome.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ==== Block 11 · Existing support and differentiation ==== */}
-        <section className="mx-auto w-full max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-2xl">
-            <Reveal>
-              <ChapterMark>Keep what helps</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                This Is Not Another Sales Script, Marketing System, or AI Tool
-              </h2>
-            </Reveal>
-            <div className="text-body-lg mt-9 space-y-4 text-muted">
-              <Reveal>
-                <p>
-                  A better offer may improve conversion. Sales training may
-                  improve commercial conversations. A CRM may improve follow-up.
-                  A content system may improve visibility. A business coach may
-                  improve strategy and accountability. A consultant may improve
-                  positioning, pricing, operations, or distribution.
-                </p>
-              </Reveal>
-              <Reveal delay={40}>
-                <p>
-                  Professional supervision may protect quality and ethics.
-                  Financial and legal advice may protect the business. AI tools
-                  may improve research, preparation, synthesis, documentation,
-                  and delivery. A team may create leverage.
-                </p>
-              </Reveal>
-              <Reveal delay={80}>
-                <p className="font-medium text-fg">Keep what helps.</p>
-              </Reveal>
-            </div>
-            <Reveal delay={120}>
-              <p className="text-headline mt-9">
-                <span className="text-emphasis">
-                  What happens inside the moment when you already know the next
-                  useful business action?
-                </span>
-              </p>
-            </Reveal>
-          </div>
-
-          {/* Comparison: a real two-column table from md up, stacked cards on
-              mobile (spec requirement, so nothing scrolls horizontally). */}
-          {/* Asymmetric split, not 50/50. The left column is two or three words
-              and the right is a full sentence, so equal columns left half the
-              table empty and forced the right column to wrap early. A narrow
-              label column against a wide one matches the actual content, and
-              dropping the card background lets the rules carry the structure -
-              a table does not need to sit on a panel to read as a table. */}
-          <Reveal delay={160}>
-            <div className="mt-12 border-t border-line">
-              <div className="hidden border-b border-line py-4 md:grid md:grid-cols-[minmax(0,13rem)_auto_1fr] md:gap-x-6">
-                <p className="text-eyebrow text-faint">Existing support</p>
-                <span aria-hidden />
-                <p className="text-eyebrow text-signal">
-                  What the Belief Score examines
-                </p>
-              </div>
-              {/* A chevron sits in the gutter of every row. The table's whole
-                  argument is that these are two LAYERS - the tool you already
-                  use, and the belief operating underneath it - and the mark
-                  makes the crossing visible instead of leaving two columns to
-                  imply it. Hidden below md, where the row stacks and the
-                  eyebrow already labels the second half. */}
-              <ul className="list-none">
-                {DIFFERENTIATION.map((row) => (
-                  <li
-                    key={row.support}
-                    className="border-b border-line py-5 md:grid md:grid-cols-[minmax(0,13rem)_auto_1fr] md:items-baseline md:gap-x-6"
-                  >
-                    <p className="font-medium text-fg">{row.support}</p>
-                    <ArrowRight
-                      className="hidden h-4 w-4 shrink-0 translate-y-0.5 text-signal/60 md:block"
-                      strokeWidth={1.75}
-                      aria-hidden
-                    />
-                    <p className="mt-1.5 leading-relaxed text-muted md:mt-0">
-                      {row.examines}
+              <div className="min-w-0">
+                <Reveal delay={60}>
+                  <blockquote className="text-emphasis text-xl leading-relaxed sm:text-2xl">
+                    &ldquo;I knew how to create transformation. I did not always
+                    see the belief deciding when that work could be priced,
+                    received, simplified, or carried by someone other than
+                    me.&rdquo;
+                  </blockquote>
+                </Reveal>
+                {/* v3.0 marks Block 06 "unchanged" and keeps these two
+                    sentences. They are the whole persuasive job of the block:
+                    the creator has stood inside the same commercial moment.
+                    Do NOT re-expand past this into life history or career
+                    chronology - that is what v2.1 already cut. */}
+                <Reveal delay={100}>
+                  <div className="text-body-lg mt-6 space-y-4 text-muted">
+                    <p>
+                      Across three decades of consulting, advising, and building
+                      companies, the same gap kept appearing, in my own work and
+                      in the work of the experts around me.
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-
-          <div className="mx-auto mt-12 max-w-2xl">
-            <Reveal>
-              <p className="text-body-lg text-muted">
-                The score does not replace these forms of support. It examines
-                how a repeated belief may influence whether useful tools are
-                applied, resisted, overcomplicated, repeatedly replaced, or used
-                to postpone a more exposed action.
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <div className="text-title mt-8 space-y-2 border-l-2 border-signal pl-6">
-                <p>Keep what helps.</p>
-                <p className="text-emphasis">
-                  This is an additional layer, not a replacement.
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ===== Block 12 · How it works + essential questions ===== */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <ChapterMark>The process</ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  How the Coaches and Consultants Belief Score Works
-                </h2>
-              </Reveal>
-            </div>
-
-            <ol className="mt-12 grid list-none gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {HOW_STEPS.map((step, i) => {
-                const Icon = HOW_STEP_ICONS[i];
-                return (
-                  <Reveal as="li" key={step.title} delay={i * 60}>
-                    <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-7">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-2 text-signal">
-                          <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-                        </span>
-                        <span className="text-eyebrow text-faint tabular-nums">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="text-title mt-5">{step.title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-muted">
-                        {step.body}
-                      </p>
-                    </div>
-                  </Reveal>
-                );
-              })}
-            </ol>
-
-            {/* The two ends of the flow, as real captures: where you begin and
-                what the guided reflection looks like a few steps in. Same
-                window-chrome frame as the result captures above.
-
-                NOTE ON CONTENT: both are from the current live AI Merge
-                assessment, so the on-screen copy (and the step counter visible
-                in the second) belongs to that product rather than to
-                coach-specific wording. Published on instruction and captioned
-                as illustrative. TODO(launch): replace with captures of the
-                approved Coaches and Consultants flow. */}
-            <Reveal delay={90}>
-              <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
-                <figure>
-                  <div className="media-frame overflow-hidden rounded-2xl bg-card">
-                    <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                      <span className="text-eyebrow ml-2 truncate text-faint">
-                        Step one · Getting started
-                      </span>
-                    </div>
-                    <Image
-                      src="/graphics/audience.png"
-                      alt="The opening screen of the AI Merge reflection, asking who is taking it and which path to follow"
-                      width={1880}
-                      height={892}
-                      sizes="(min-width: 768px) 560px, 100vw"
-                      className="block h-auto w-full"
-                    />
+                    <p>
+                      Knowing how to solve the problem is one capability.
+                      Letting the work be priced, simplified, delegated, and
+                      directly offered is a different one.
+                    </p>
                   </div>
-                  <figcaption className="mt-3 text-center text-sm text-faint">
-                    Where you begin
-                  </figcaption>
-                </figure>
-
-                <figure>
-                  <div className="media-frame overflow-hidden rounded-2xl bg-card">
-                    <div className="flex items-center gap-2 border-b border-line px-5 py-3.5">
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/25" aria-hidden />
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/20" aria-hidden />
-                      <span className="h-2.5 w-2.5 rounded-full bg-fg/15" aria-hidden />
-                      <span className="text-eyebrow ml-2 truncate text-faint">
-                        Working through the reflection
-                      </span>
-                    </div>
-                    <Image
-                      src="/graphics/beat.png"
-                      alt="A later screen in the AI Merge reflection, showing progress through the questions"
-                      width={1879}
-                      height={891}
-                      sizes="(min-width: 768px) 560px, 100vw"
-                      className="block h-auto w-full"
-                    />
-                  </div>
-                  <figcaption className="mt-3 text-center text-sm text-faint">
-                    Working through it, one prompt at a time
-                  </figcaption>
-                </figure>
+                </Reveal>
+                <Reveal delay={130}>
+                  <p className="mt-6 font-medium text-fg">
+                    Manuj Aggarwal
+                    <span className="ml-2 font-normal text-faint">
+                      · creator of AI Merge
+                    </span>
+                  </p>
+                </Reveal>
+                <ul className="mt-8 grid list-none gap-x-6 gap-y-5 sm:grid-cols-2">
+                  {CREDENTIALS.map((c, i) => {
+                    const Icon = CREDENTIAL_ICONS[i];
+                    return (
+                      <Reveal as="li" key={c.label} delay={140 + i * 50}>
+                        <div className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface-2 text-signal">
+                            <Icon
+                              className="h-4 w-4"
+                              strokeWidth={1.75}
+                              aria-hidden
+                            />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="text-eyebrow block text-faint">
+                              {c.label}
+                            </span>
+                            <span className="mt-1 block text-sm leading-snug text-fg">
+                              {c.value}
+                            </span>
+                          </span>
+                        </div>
+                      </Reveal>
+                    );
+                  })}
+                </ul>
               </div>
-            </Reveal>
+            </div>
 
-            {/* Step 1's example patterns: this list is what keeps the page
-                coherent for every approved ad angle (ad-to-page continuity). */}
             <Reveal delay={100}>
-              <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-line bg-card p-7 sm:p-8">
-                <p className="text-eyebrow text-faint">
-                  For example, one pattern such as
+              <div className="mt-16">
+                <p className="text-eyebrow text-center text-faint">
+                  Professional experience behind AI Merge
                 </p>
-                <ul className="mt-5 flex list-none flex-wrap gap-2.5">
-                  {EXAMPLE_PATTERNS.map((p) => (
-                    <li key={p}>
-                      <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3.5 py-2 text-sm text-muted">
-                        <span className="list-dot shrink-0" aria-hidden />
-                        {p}
-                      </span>
+                <ul className="mt-8 flex list-none flex-wrap items-center justify-center gap-x-12 gap-y-6">
+                  {TRUST_LOGOS.map((logo) => (
+                    <li
+                      key={logo.alt}
+                      className="relative h-9 w-24 opacity-60 grayscale transition-all duration-700 sm:h-10 sm:w-28 [@media(hover:hover)]:hover:opacity-100 [@media(hover:hover)]:hover:grayscale-0"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        fill
+                        sizes="(min-width: 640px) 112px, 96px"
+                        className="object-contain"
+                      />
                     </li>
                   ))}
                 </ul>
-                <p className="mt-6 text-sm text-faint">
-                  Not your entire business. One pattern.
+                <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed text-faint">
+                  Organizations shown reflect prior professional work by Manuj
+                  Aggarwal and do not imply endorsement of the Coaches and
+                  Consultants Belief Score, AI Merge, TetraNoodle Technologies,
+                  or this offer.
                 </p>
               </div>
             </Reveal>
-
-            <Reveal delay={120}>
-              <p className="text-body-lg mx-auto mt-10 max-w-xl text-center text-muted">
-                The result is a hypothesis for reflection. You remain the
-                authority on your business and experience.
-              </p>
-            </Reveal>
-
-            <Reveal delay={140}>
-              <CtaBlock location="how_it_works" className="mt-10" />
-            </Reveal>
-
-            {/* Essential questions: closed by default, one open at a time
-                (native exclusive accordion via the shared name attribute).
-                Every categorical disclaimer lives here. */}
-            <div className="mx-auto mt-20 max-w-2xl">
-              <Reveal>
-                <h2 className="text-headline text-center">
-                  Essential Questions
-                </h2>
-              </Reveal>
-              <Reveal delay={80}>
-                <div className="mt-10">
-                  {/* Rendered from lib/faq.ts, which is also what generates the
-                      FAQPage JSON-LD above. One array, so the markup an answer
-                      engine reads and the copy a visitor sees cannot diverge. */}
-                  {ESSENTIAL_FAQS.map((faq) => (
-                    <FaqItem key={faq.q} question={faq.q}>
-                      {faq.a.map((paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
-                      ))}
-                    </FaqItem>
-                  ))}
-                  <FaqItem question="View research, privacy, technology, and professional-boundary details">
-                    <h3 className="text-title">Research Foundation</h3>
-                    <p>
-                      Research across learning, expectations, identity, stress,
-                      attention, emotional memory, decision-making, social
-                      evaluation, and behavior suggests that prior beliefs may
-                      influence what people notice, what they expect, how they
-                      interpret uncertainty, what feels safe enough to attempt,
-                      what they avoid, how they respond under pressure, and what
-                      each result appears to prove.
-                    </p>
-                    <p>
-                      This does not mean belief is the sole cause of a
-                      commercial or professional outcome. The AI Merge
-                      methodology combines established scientific principles
-                      with a proprietary interpretive framework. The Coaches and
-                      Consultants Belief Score should be treated as a reflective
-                      and educational tool unless direct validation research
-                      establishes stronger claims.
-                    </p>
-                    {/* TODO(launch): insert approved public research summary,
-                        source register, exact publication wording, approved
-                        "peer-reviewed" wording, and the distinction between
-                        established research, AI Merge interpretation, and
-                        product-specific evidence. */}
-
-                    <h3 className="text-title">
-                      How Technology Supports the Result
-                    </h3>
-                    <p>
-                      The system uses the information you provide to organize
-                      what happened, what you did next, what the moment may have
-                      come to mean, what belief may have formed or become
-                      reinforced, how the loop may continue, and what another
-                      response could look like.
-                    </p>
-                    <p>
-                      The system does not independently know your full business.
-                      It does not access your CRM, client files, financial
-                      accounts, private communications, or business systems
-                      unless a future product explicitly requests and discloses
-                      such access.
-                    </p>
-
-                    <h3 className="text-title">Privacy and Data</h3>
-                    {/* TODO(launch): verify and disclose what information is
-                        collected, why, where it is stored, retention period,
-                        whether humans may review it, which vendors process it,
-                        whether it is used for model or system improvement,
-                        whether it is sold or shared, deletion and access
-                        procedures, and marketing-consent behavior. */}
-                    <p>
-                      Before publication, the published policy discloses what
-                      information is collected, why it is collected, where it is
-                      stored, the retention period, whether humans may review
-                      it, which vendors process it, whether it is used for model
-                      or system improvement, whether it is shared, deletion and
-                      access procedures, and marketing-consent behavior.
-                    </p>
-
-                    <h3 className="text-title">Professional Boundaries</h3>
-                    <p>
-                      The Coaches and Consultants Belief Score is not business
-                      consulting, legal advice, tax advice, financial advice,
-                      investment advice, employment advice, professional
-                      supervision, medical advice, mental-health treatment,
-                      diagnosis, psychotherapy, or crisis support. It is not a
-                      guarantee of clients, revenue, pricing, scale, or business
-                      outcomes.
-                    </p>
-                    <p>
-                      Use personal judgment and seek qualified support when
-                      needed.
-                    </p>
-                  </FaqItem>
-                </div>
-              </Reveal>
-
-              {/* In-body links to the two answer-engine pages. Without these
-                  they are reachable only from the footer, which both readers
-                  and link-graph analysis discount. */}
-              <Reveal delay={120}>
-                <p className="mt-8 text-center text-sm text-faint">
-                  More answers on the{" "}
-                  <Link
-                    href={LINKS.faq.href}
-                    className="font-medium text-fg underline underline-offset-4"
-                  >
-                    full FAQ
-                  </Link>
-                  , or see every term defined in the{" "}
-                  <Link
-                    href={LINKS.glossary.href}
-                    className="font-medium text-fg underline underline-offset-4"
-                  >
-                    glossary
-                  </Link>
-                  .
-                </p>
-              </Reveal>
-            </div>
           </div>
         </section>
 
-        {/* ================= Block 13 · Final CTA ================= */}
-        <section className="border-t border-line">
-          <div className="mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
+        {/* =============== Essential questions ===============
+            EVERY categorical disclaimer on this page lives here. When sections
+            were cut, their compliance copy was folded into this accordion
+            rather than deleted - the "keep what helps" answer below is the
+            entire former differentiation block. Do not trim these answers
+            without checking what else used to carry the same statement. */}
+        <section className="relative overflow-hidden">
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
+            <Reveal>
+              <ChapterMark numeral="VI" className="justify-center">
+                Before you start
+              </ChapterMark>
+            </Reveal>
+            <Reveal delay={60}>
+              <h2 className="text-headline mt-5 text-center">
+                Essential questions
+              </h2>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <div className="mt-10">
+                {/* Rendered from DOORWAY_FAQS in lib/faq.ts, which is also
+                    what generates this page's FAQPage JSON-LD above. One array
+                    for both, so the markup an answer engine reads and the copy
+                    a visitor sees cannot diverge. v3.0 cut the doorway from six
+                    questions to three; the other three still render on /faq. */}
+                {DOORWAY_FAQS.map((faq) => (
+                  <FaqItem key={faq.q} question={faq.q}>
+                    {faq.a.map((paragraph, i) => (
+                      <p key={i}>{paragraph}</p>
+                    ))}
+                  </FaqItem>
+                ))}
+
+                <FaqItem question="Is this a replacement for strategy, positioning, or sales training?">
+                  <p>
+                    No. A better offer may improve conversion. Sales training
+                    may improve commercial conversations. A CRM may improve
+                    follow-up. A business coach may improve strategy and
+                    accountability. Professional supervision may protect quality
+                    and ethics. Keep what helps.
+                  </p>
+                  <p>
+                    The Belief Score does not replace market research, offer
+                    design, sales skill, positioning, pricing strategy, proof,
+                    distribution, referrals, content strategy, financial
+                    discipline, legal or professional advice, or direct market
+                    evidence. It asks one narrower question: what happens in the
+                    moment when you already know the next useful business
+                    action, but move back into helping, refining, customizing,
+                    explaining, or preparing?
+                  </p>
+                  <p>
+                    It is an additional layer, not a replacement, and belief is
+                    never presented as the sole cause of a commercial outcome.
+                  </p>
+                </FaqItem>
+
+                <FaqItem question="View research, privacy, technology, and professional-boundary details">
+                  <h3 className="text-title">Research foundation</h3>
+                  <p>
+                    Research across learning, expectations, identity, stress,
+                    attention, emotional memory, decision-making, social
+                    evaluation, and behavior suggests that prior beliefs may
+                    influence what people notice, what they expect, how they
+                    interpret uncertainty, what feels safe enough to attempt,
+                    what they avoid, how they respond under pressure, and what
+                    each result appears to prove.
+                  </p>
+                  <p>
+                    This does not mean belief is the sole cause of a commercial
+                    or professional outcome. The AI Merge methodology combines
+                    established scientific principles with a proprietary
+                    interpretive framework. The Coaches and Consultants Belief
+                    Score should be treated as a reflective and educational tool
+                    unless direct validation research establishes stronger
+                    claims.
+                  </p>
+                  {/* TODO(launch): insert approved public research summary,
+                      source register, exact publication wording, approved
+                      "peer-reviewed" wording, and the distinction between
+                      established research, AI Merge interpretation, and
+                      product-specific evidence. */}
+
+                  <h3 className="text-title">
+                    How technology supports the result
+                  </h3>
+                  <p>
+                    The system uses the information you provide to organize what
+                    happened, what you did next, what the moment may have come
+                    to mean, what belief may have formed or become reinforced,
+                    how the loop may continue, and what another response could
+                    look like. The technology helps reveal the pattern. You
+                    decide what it means. Your actions create the evidence that
+                    matters.
+                  </p>
+                  <p>
+                    The system does not independently know your full business.
+                    It does not access your CRM, client files, financial
+                    accounts, private communications, or business systems unless
+                    a future product explicitly requests and discloses such
+                    access.
+                  </p>
+
+                  <h3 className="text-title">Privacy and data</h3>
+                  {/* TODO(launch): verify and disclose what information is
+                      collected, why, where it is stored, retention period,
+                      whether humans may review it, which vendors process it,
+                      whether it is used for model or system improvement,
+                      whether it is sold or shared, deletion and access
+                      procedures, and marketing-consent behavior. */}
+                  <p>
+                    Before publication, the published policy discloses what
+                    information is collected, why it is collected, where it is
+                    stored, the retention period, whether humans may review it,
+                    which vendors process it, whether it is used for model or
+                    system improvement, whether it is shared, deletion and
+                    access procedures, and marketing-consent behavior.
+                  </p>
+
+                  <h3 className="text-title">Professional boundaries</h3>
+                  <p>
+                    The Coaches and Consultants Belief Score is not business
+                    consulting, legal advice, tax advice, financial advice,
+                    investment advice, employment advice, professional
+                    supervision, medical advice, mental-health treatment,
+                    diagnosis, psychotherapy, or crisis support. It is not a
+                    business assessment, a personality test, or a professional
+                    evaluation, and it is not a guarantee of clients, revenue,
+                    pricing, scale, or business outcomes.
+                  </p>
+                  <p>
+                    Use personal judgment and seek qualified support when
+                    needed.
+                  </p>
+                </FaqItem>
+              </div>
+            </Reveal>
+
+            {/* In-body links to the two answer-engine pages. Without these they
+                are reachable only from the footer, which both readers and
+                link-graph analysis discount. */}
+            <Reveal delay={120}>
+              <p className="mt-8 text-center text-sm text-faint">
+                More answers on the{" "}
+                <Link
+                  href={LINKS.faq.href}
+                  className="font-medium text-fg underline underline-offset-4"
+                >
+                  full FAQ
+                </Link>
+                , or see every term defined in the{" "}
+                <Link
+                  href={LINKS.glossary.href}
+                  className="font-medium text-fg underline underline-offset-4"
+                >
+                  glossary
+                </Link>
+                .
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* =============== Final CTA =============== */}
+        <section className="relative overflow-hidden border-t border-line bg-surface">
+          <div className="section-orbs" aria-hidden />
+          <div className="relative mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
             <Reveal>
               <h2 className="text-display">
-                Coaches and consultants: you already know what the pattern
-                keeps doing.{" "}
-                <span className="text-emphasis">
-                  Now see what it may have taught you to believe.
-                </span>
+                <WordReveal
+                  step={65}
+                  segments={[
+                    {
+                      kind: "text",
+                      text: "You already know what the pattern keeps doing.",
+                    },
+                    { kind: "br" },
+                    {
+                      kind: "italic",
+                      text: "Now see what it may have taught you to believe.",
+                    },
+                  ]}
+                />
               </h2>
             </Reveal>
             <Reveal delay={80}>
               <p className="text-body-lg mt-8 text-muted">
-                Choose one recurring pattern. Describe what happens in your own
-                words. Receive your personalized{" "}
-                <span className="font-medium text-fg">Pattern-to-Belief Map</span>{" "}
-                showing:
+                One recurring pattern, described in your own words. Your score
+                out of 100, four scored pillars, and your personalized
+                Pattern-to-Belief Map.
               </p>
-            </Reveal>
-            <Reveal delay={120}>
-              <ul className="mx-auto mt-8 grid max-w-xl list-none gap-3 text-left">
-                {MAP_FIELDS.map((item) => (
-                  <li key={item.title} className="flex items-start gap-3">
-                    <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                    <span className="text-body-lg text-muted">{item.title}</span>
-                  </li>
-                ))}
-              </ul>
             </Reveal>
             <Reveal delay={160}>
               <CtaBlock location="final" className="mt-10" />
@@ -2381,7 +1130,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-      {/* Block 14 lives in SiteFooter. */}
       <SiteFooter />
       <MobileStickyCta />
     </>
