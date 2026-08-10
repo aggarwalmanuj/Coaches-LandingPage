@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { CookieConsent } from "@/components/cookie-consent";
 import { FacebookPixel } from "@/components/facebook-pixel";
@@ -136,6 +137,20 @@ export default function RootLayout({
         <CookieConsent />
         {/* Vercel Analytics is cookieless, so it runs without consent. */}
         <Analytics />
+        {/* TetraNoodle Analytics. Declared once here in the root layout, so it
+            is present on every route and Next loads it exactly once — client
+            navigations reuse the already-executed script rather than
+            re-injecting it. `afterInteractive` keeps it off the critical path
+            (it must not compete with the hero LCP), which is the right
+            strategy for a page-view beacon that has nothing to do before
+            hydration. The origin is allow-listed in the CSP in next.config.ts;
+            adding it there is what keeps this working once CSP_ENFORCE=true. */}
+        <Script
+          id="tetranoodle-analytics"
+          src="https://growth-os.tetranoodle.workers.dev/a.js"
+          data-site="coaches"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
