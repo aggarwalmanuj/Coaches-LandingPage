@@ -21,6 +21,9 @@ import type { NextConfig } from "next";
      the embedded booking iframe → frame-src).
    - Vercel Analytics (@vercel/analytics): same-origin /_vercel/insights/*
      plus va.vercel-scripts.com.
+   - TetraNoodle Analytics: script from growth-os.tetranoodle.workers.dev;
+     its page-view beacons post back to the same origin, hence script-src AND
+     connect-src.
    - Fonts: next/font/google self-hosts, so no external font origin needed.
 
    Note on 'unsafe-inline' for scripts: the Meta Pixel bootstrap and the
@@ -37,14 +40,14 @@ const ENFORCE_CSP = process.env.CSP_ENFORCE === "true";
 const csp = [
   "default-src 'self'",
   // Inline required by the Meta Pixel + PostHog bootstrap snippets.
-  "script-src 'self' 'unsafe-inline' https://*.posthog.com https://*.i.posthog.com https://connect.facebook.net https://assets.calendly.com https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://*.posthog.com https://*.i.posthog.com https://connect.facebook.net https://assets.calendly.com https://va.vercel-scripts.com https://growth-os.tetranoodle.workers.dev",
   // Styled-jsx / Tailwind runtime + Calendly widget styles need inline styles.
   "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
   "img-src 'self' data: blob: https://*.posthog.com https://www.facebook.com https://*.facebook.com https://assets.calendly.com",
   "font-src 'self' data:",
   // XHR/fetch/beacon: PostHog proxy is same-origin ('self'); Meta + Calendly
   // + Vercel insights are cross-origin.
-  "connect-src 'self' https://*.posthog.com https://*.i.posthog.com https://connect.facebook.net https://www.facebook.com https://*.facebook.com https://calendly.com https://*.calendly.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+  "connect-src 'self' https://*.posthog.com https://*.i.posthog.com https://connect.facebook.net https://www.facebook.com https://*.facebook.com https://calendly.com https://*.calendly.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://growth-os.tetranoodle.workers.dev",
   // The embedded Calendly booking widget renders in an iframe.
   "frame-src 'self' https://calendly.com https://*.calendly.com",
   // PostHog session recording spawns a blob-URL web worker.
