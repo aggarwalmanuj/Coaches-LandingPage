@@ -81,7 +81,7 @@ export function SceneCallEnded() {
       >
         <span
           className="text-[8.5px] uppercase tracking-[0.16em]"
-          style={{ color: "var(--pillar-4)" }}
+          style={{ color: "var(--pillar-4-ink)" }}
         >
           Agreed next step
         </span>
@@ -103,7 +103,8 @@ export function SceneOneMorePass() {
           className="rounded-full px-2 py-0.5 text-[8px] uppercase tracking-[0.14em]"
           style={{
             background: "color-mix(in srgb, var(--pillar-2) 16%, transparent)",
-            color: "var(--pillar-2)",
+            // -ink: this is an 8px label, not a graphic.
+            color: "var(--pillar-2-ink)",
           }}
         >
           Reopened
@@ -173,7 +174,7 @@ export function SceneUnsent() {
         <span className="text-[10px] text-fg">Follow-up to Dana</span>
         <span
           className="ml-auto shrink-0 text-[8.5px] uppercase tracking-[0.14em]"
-          style={{ color: "var(--pillar-3)" }}
+          style={{ color: "var(--pillar-3-ink)" }}
         >
           Draft
         </span>

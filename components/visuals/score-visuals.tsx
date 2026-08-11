@@ -153,11 +153,20 @@ export function PillarDial({
           </span>
         </ScoreRing>
         <div className="min-w-0">
-          <p
-            className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.18em]"
-            style={{ color }}
-          >
-            <Icon className="h-3 w-3 shrink-0" strokeWidth={2} aria-hidden />
+          {/* The over-line wears a TEXT token; only the icon carries the hue.
+              This is the funnel's own rule ("text wears text tokens, never the
+              series color") and it is what lets us use its exact
+              DIMENSION_COLORS: the moment a series colour becomes 9px type,
+              it has to be lifted for contrast, and the palette drifts away
+              from the product it is supposed to match. The ring beside this
+              already says which dimension it is. */}
+          <p className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.18em] text-faint">
+            <Icon
+              className="h-3 w-3 shrink-0"
+              strokeWidth={2}
+              aria-hidden
+              style={{ color }}
+            />
             {pillar}
           </p>
           <p className="mt-1 font-serif text-[17px] leading-snug text-fg">

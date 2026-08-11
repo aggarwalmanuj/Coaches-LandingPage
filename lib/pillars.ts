@@ -38,13 +38,29 @@ export const PILLAR_ORDER: readonly PillarKey[] = [
   "energyAlignment",
 ];
 
-/** One token per dimension. The values live in globals.css; see the long note
- *  there on why this palette is categorical rather than a scale. */
+/** GRAPHICS token per dimension: ring strokes, bar fills, icon glyphs,
+ *  borders, tints. These are the funnel's DIMENSION_COLORS verbatim, so our
+ *  dials and the real product captures embedded in the walkthrough render one
+ *  palette rather than two near-misses. See the long note in globals.css. */
 export const PILLAR_COLORS: Record<PillarKey, string> = {
   directionClarity: "var(--pillar-1)",
   identityAlignment: "var(--pillar-2)",
   decisionReadiness: "var(--pillar-3)",
   energyAlignment: "var(--pillar-4)",
+};
+
+/** TEXT token per dimension: the same hue lifted until it clears 4.5:1 as
+ *  small text on our card, which is a step darker than the funnel's.
+ *
+ *  Use ONLY where a coloured label is genuinely the design - the assessment's
+ *  own entry screen renders its pillar chips that way. For over-lines and
+ *  names, prefer a text token and let the ring carry the hue: that is what the
+ *  funnel does, and it is why the funnel needs no text variant at all. */
+export const PILLAR_TEXT_COLORS: Record<PillarKey, string> = {
+  directionClarity: "var(--pillar-1-ink)",
+  identityAlignment: "var(--pillar-2-ink)",
+  decisionReadiness: "var(--pillar-3-ink)",
+  energyAlignment: "var(--pillar-4-ink)",
 };
 
 /** A second, non-colour identity encoding, so the dimensions stay tellable

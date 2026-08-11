@@ -98,19 +98,42 @@
      shown. Change one here and the promise breaks.
 
      A CATEGORICAL palette: colour identifies the dimension, never its rank or
-     its value. Order and assignment are fixed. Hues are ~90deg apart and sit
-     in one lightness band so they separate on the navy card (#103039) and
-     stay tellable apart under the common colour-vision deficiencies. Each is
-     lifted a step from the funnel's own values, which were validated against
-     its lighter card (#163a4d) and would sit too dark on ours.
+     its value. Order and assignment are fixed. Colour is never the only
+     encoding - every use ships with an icon and a text label.
 
-     Colour is never the only encoding - every use ships with an icon and a
-     text label.
+     --pillar-N are the funnel's DIMENSION_COLORS *verbatim*
+     (scorecard-funnel/components/challenge/score-visuals.tsx). They are also
+     what its own landing page renders, so the two properties, the real
+     product captures embedded in our walkthrough, and these dials are all one
+     palette. Do not "improve" them: a visitor sees the captured chips and our
+     dials within one scroll, and any drift reads as two products.
+
+     TWO TOKENS PER DIMENSION, because they have different jobs:
+
+       --pillar-N      graphics only - ring strokes, bar fills, icon glyphs,
+                       borders, tints. WCAG needs 3:1 for graphical objects;
+                       all four clear that on our card (#103039) at 3.60-4.55.
+
+       --pillar-N-ink  the same hue lifted until it clears 4.5:1 as SMALL TEXT
+                       on our card (4.54-6.38). Needed only because our ground
+                       is a step darker than the funnel's (#0a232e / #103039
+                       vs #0f2c3b / #163a4d).
+
+     The funnel itself needs no text variant: it never sets a series colour on
+     text at all - over-lines are text-foreground/50 and labels are text-ink,
+     with colour confined to the ring. Follow that rule first, and reach for
+     -ink only where a coloured chip label is genuinely the design (the
+     assessment's own entry screen renders its pillar chips that way).
   ------------------------------------------------------------------------- */
-  --pillar-1: #2bb3cf; /* Pattern Precision  · teal   */
-  --pillar-2: #e8703f; /* Identity Distance  · orange */
-  --pillar-3: #a79ef0; /* Evidence Readiness · violet */
-  --pillar-4: #e0a52e; /* Cost Realism       · amber  */
+  --pillar-1: #1a9cba; /* Pattern Precision  · teal   */
+  --pillar-2: #d95926; /* Identity Distance  · orange */
+  --pillar-3: #9085e9; /* Evidence Readiness · violet */
+  --pillar-4: #c98500; /* Cost Realism       · amber  */
+
+  --pillar-1-ink: #2bb3cf;
+  --pillar-2-ink: #e8703f;
+  --pillar-3-ink: #a79ef0;
+  --pillar-4-ink: #e0a52e;
 }
 
 /* Optional light section variant, same teal family. */

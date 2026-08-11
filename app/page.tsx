@@ -41,6 +41,7 @@ import {
   PILLAR_ICONS,
   PILLAR_LABELS,
   PILLAR_ORDER,
+  PILLAR_TEXT_COLORS,
   SAMPLE_SUBSCORES,
 } from "@/lib/pillars";
 import type { CtaLocation } from "@/lib/analytics";
@@ -1261,9 +1262,13 @@ export default function Home() {
                       <span
                         className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[10.5px] uppercase tracking-[0.14em]"
                         style={{
+                          // Border and tint take the GRAPHICS token (3:1 is
+                          // the bar for a non-text object); the label takes
+                          // the lifted -ink token, because at 10.5px it is
+                          // small text and needs 4.5:1 on this ground.
                           borderColor: `color-mix(in srgb, ${color} 45%, transparent)`,
                           background: `color-mix(in srgb, ${color} 9%, transparent)`,
-                          color,
+                          color: PILLAR_TEXT_COLORS[key],
                           // Stagger via the existing rise-in, so the row
                           // assembles left to right as it enters.
                           ["--rise-delay" as string]: `${i * 90}ms`,
